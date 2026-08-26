@@ -29,7 +29,7 @@ export const askQuestion = async (req, res) => {
   }
 
   try {
-    const { answer, sources } = await generateRAGAnswer(question.trim());
+    const { answer, sources } = await generateRAGAnswer(question.trim(), req.user);
 
     return res.status(200).json({
       success: true,

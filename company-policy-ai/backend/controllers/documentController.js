@@ -21,7 +21,7 @@ export const uploadDocument = async (req, res) => {
     });
   }
 
-  const { title, department } = req.body;
+  const { title, department, allowedRoles } = req.body;
 
   if (!title || !title.trim()) {
     return res.status(400).json({ success: false, message: 'Document title is required.' });
@@ -30,9 +30,23 @@ export const uploadDocument = async (req, res) => {
     return res.status(400).json({ success: false, message: 'Department is required.' });
   }
 
-  const allowedDepartments = ['HR', 'IT', 'Finance', 'Engineering', 'Marketing', 'Management', 'General'];
+  const allowedDepartments = ['HR', 'IT', 'Finance', 'Engineering', 'Marketing', 'Management', 'Sales', 'General'];
   if (!allowedDepartments.includes(department)) {
     return res.status(400).json({ success: false, message: 'Invalid department value.' });
+  }
+
+  // Parse allowedRoles if provided
+  let parsedAllowedRoles = ['admin', 'hr', 'manager', 'employee'];
+  if (allowedRoles) {
+    if (typeof allowedRoles === 'string') {
+      try {
+        parsedAllowedRoles = JSON.parse(allowedRoles);
+      } catch {
+        parsedAllowedRoles = allowedRoles.split(',').map((r) => r.trim());
+      }
+    } else if (Array.isArray(allowedRoles)) {
+      parsedAllowedRoles = allowedRoles;
+    }
   }
 
   // Extra mime check beyond Multer fileFilter
@@ -110,6 +124,7 @@ export const uploadDocument = async (req, res) => {
       fileSize: req.file.size,
       mimeType: req.file.mimetype,
       department,
+      allowedRoles: parsedAllowedRoles,
       uploadedBy: req.user._id,
       totalPages,
       totalChunks: chunks.length,
@@ -125,6 +140,8 @@ export const uploadDocument = async (req, res) => {
       pageStart: c.pageStart,
       pageEnd: c.pageEnd,
       chunkNumber: c.chunkNumber,
+      department,
+      allowedRoles: parsedAllowedRoles,
     }));
 
     await Chunk.insertMany(chunkDocs);
@@ -191,7 +208,23 @@ export const embedDocument = async (req, res) => {
 // ============================================================
 export const getDocuments = async (req, res) => {
   try {
-    const documents = await Document.find()
+    let query = {};
+
+    if (req.user && req.user.role !== 'admin') {
+      if (req.user.role === 'hr') {
+        query = {
+          $or: [{ department: 'HR' }, { department: 'General' }, { department: req.user.department }],
+          allowedRoles: 'hr',
+        };
+      } else {
+        query = {
+          $or: [{ department: 'General' }, { department: req.user.department }],
+          allowedRoles: req.user.role,
+        };
+      }
+    }
+
+    const documents = await Document.find(query)
       .sort({ createdAt: -1 })
       .select('-__v')
       .populate('uploadedBy', 'name email role');
@@ -221,6 +254,19 @@ export const getDocumentById = async (req, res) => {
 
     if (!document) {
       return res.status(404).json({ success: false, message: 'Document not found.' });
+    }
+
+    // Access check for non-admin users
+    if (req.user.role !== 'admin') {
+      const isDeptAllowed = document.department === 'General' || document.department === req.user.department;
+      const isRoleAllowed = document.allowedRoles && document.allowedRoles.includes(req.user.role);
+
+      if (!isDeptAllowed || !isRoleAllowed) {
+        return res.status(403).json({
+          success: false,
+          message: 'You do not have permission to view this document.',
+        });
+      }
     }
 
     const chunks = await Chunk.find({ documentId: id })

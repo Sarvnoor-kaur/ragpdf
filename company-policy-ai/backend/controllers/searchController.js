@@ -29,7 +29,7 @@ export const searchDocuments = async (req, res) => {
   }
 
   try {
-    const results = await performSearch(query.trim());
+    const results = await performSearch(query.trim(), {}, req.user);
 
     return res.status(200).json({
       success: true,

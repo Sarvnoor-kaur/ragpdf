@@ -21,15 +21,18 @@ export const searchSimilarChunks = async (queryVector, options = {}) => {
   const numCandidates = options.numCandidates || DEFAULT_NUM_CANDIDATES;
 
   try {
+    const vectorSearchStage = {
+      index: 'vector_index',
+      path: 'embedding',
+      queryVector: queryVector,
+      numCandidates: numCandidates,
+      // Fetch more candidates when we'll filter post-search
+      limit: options.filter ? Math.min(numCandidates, 100) : limit,
+    };
+
     const pipeline = [
       {
-        $vectorSearch: {
-          index: 'vector_index',
-          path: 'embedding',
-          queryVector: queryVector,
-          numCandidates: numCandidates,
-          limit: limit,
-        },
+        $vectorSearch: vectorSearchStage,
       },
       {
         $project: {
@@ -46,10 +49,23 @@ export const searchSimilarChunks = async (queryVector, options = {}) => {
       },
     ];
 
+    // Apply access-control post-filter as a $match stage (safe alternative to Atlas index filter)
+    if (options.filter && options.filter.documentId && options.filter.documentId.$in) {
+      pipeline.push({
+        $match: {
+          documentId: { $in: options.filter.documentId.$in },
+        },
+      });
+    }
+
+    // Enforce final result limit after filtering
+    pipeline.push({ $limit: limit });
+
     const results = await Chunk.aggregate(pipeline);
     return results;
   } catch (error) {
     console.error('[Vector Search Error]:', error.message);
-    throw new Error('Failed to execute vector search. Ensure the vector_index is created and READY in Atlas.');
+    console.error('[Vector Search Error - Full]:', error);
+    throw new Error(`Failed to execute vector search: ${error.message}`);
   }
 };

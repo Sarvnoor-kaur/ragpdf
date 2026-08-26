@@ -23,6 +23,14 @@ const chunkSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'Chunk number is required'],
     },
+    department: {
+      type: String,
+      default: 'General',
+    },
+    allowedRoles: {
+      type: [String],
+      default: ['admin', 'hr', 'manager', 'employee'],
+    },
     embedding: {
       type: [Number],
       default: undefined,

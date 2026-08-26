@@ -146,8 +146,8 @@ export const sendMessage = async (req, res) => {
       });
     }
 
-    // 1. Run RAG Pipeline
-    const { answer, sources } = await generateRAGAnswer(question.trim());
+    // 1. Run RAG Pipeline with user context
+    const { answer, sources } = await generateRAGAnswer(question.trim(), req.user);
 
     // 2. Add user message
     conversation.messages.push({
@@ -180,9 +180,11 @@ export const sendMessage = async (req, res) => {
     });
   } catch (error) {
     console.error('[Chat Controller Error - sendMessage]:', error.message);
+    console.error('[Chat Controller Error - Stack]:', error.stack);
     return res.status(500).json({
       success: false,
       message: 'Failed to process message and generate answer.',
+      debug: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };

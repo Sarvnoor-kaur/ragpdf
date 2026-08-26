@@ -24,10 +24,18 @@ const documentSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Department is required'],
       enum: {
-        values: ['HR', 'IT', 'Finance', 'Engineering', 'Marketing', 'Management', 'General'],
+        values: ['HR', 'IT', 'Finance', 'Engineering', 'Marketing', 'Management', 'Sales', 'General'],
         message: '{VALUE} is not a supported department',
       },
       default: 'General',
+    },
+    allowedRoles: {
+      type: [String],
+      enum: {
+        values: ['admin', 'hr', 'manager', 'employee'],
+        message: '{VALUE} is not a valid allowed role',
+      },
+      default: ['admin', 'hr', 'manager', 'employee'],
     },
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,

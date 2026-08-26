@@ -191,8 +191,8 @@ const Dashboard = () => {
               </div>
 
               <div className="mt-6 pt-4 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-500">
-                <span>Status: Step 5 Complete ✓</span>
-                <span>RAG Active</span>
+                <span>Status: Day 12 Complete ✓</span>
+                <span>RBAC &amp; ABAC Active</span>
               </div>
             </div>
           </div>

@@ -7,7 +7,8 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { uploadDocument, getDocuments, deleteDocument, generateEmbeddings } from '../services/documentService';
 
-const DEPARTMENTS = ['HR', 'IT', 'Finance', 'Engineering', 'Marketing', 'Management', 'General'];
+const DEPARTMENTS = ['HR', 'IT', 'Finance', 'Engineering', 'Marketing', 'Management', 'Sales', 'General'];
+const ALL_ROLES = ['admin', 'hr', 'manager', 'employee'];
 
 const STATUS_COLORS = {
   active: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
@@ -32,6 +33,7 @@ const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-IN', {
 const UploadForm = ({ onSuccess, onClose }) => {
   const [title, setTitle] = useState('');
   const [department, setDepartment] = useState('');
+  const [allowedRoles, setAllowedRoles] = useState(['admin', 'hr', 'manager', 'employee']);
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -63,12 +65,14 @@ const UploadForm = ({ onSuccess, onClose }) => {
 
     if (!title.trim()) return setError('Please enter a document title.');
     if (!department) return setError('Please select a department.');
+    if (allowedRoles.length === 0) return setError('Please select at least one allowed role.');
     if (!file) return setError('Please choose a PDF file.');
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('title', title.trim());
     formData.append('department', department);
+    formData.append('allowedRoles', JSON.stringify(allowedRoles));
 
     setUploading(true);
     setProgress(0);
@@ -151,6 +155,32 @@ const UploadForm = ({ onSuccess, onClose }) => {
                 <option key={d} value={d}>{d}</option>
               ))}
             </select>
+          </div>
+
+          {/* Allowed Roles */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              Allowed Roles (Access Control)
+            </label>
+            <div className="grid grid-cols-2 gap-2 bg-[#131b2e]/50 border border-slate-800 p-3 rounded-xl">
+              {ALL_ROLES.map((r) => (
+                <label key={r} className="flex items-center gap-2 text-xs text-slate-300 capitalize cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={allowedRoles.includes(r)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setAllowedRoles([...allowedRoles, r]);
+                      } else {
+                        setAllowedRoles(allowedRoles.filter((role) => role !== r));
+                      }
+                    }}
+                    className="rounded bg-slate-800 border-slate-700 text-accentIndigo focus:ring-0"
+                  />
+                  <span>{r}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           {/* File Input */}

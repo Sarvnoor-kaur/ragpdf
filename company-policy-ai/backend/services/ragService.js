@@ -37,35 +37,75 @@ const buildContext = async (chunks) => {
 };
 
 /**
- * Generates a RAG answer for the given question.
+ * Generates a RAG answer for the given question, adhering to the authenticated user's access permissions.
  * 
  * @param {string} question - The user's question.
+ * @param {Object} user - The authenticated user object from req.user.
  * @returns {Promise<Object>} - Contains { answer, sources }
  */
-export const generateRAGAnswer = async (question) => {
-  console.log(`[RAG] Question received: "${question}"`);
+export const generateRAGAnswer = async (question, user = null) => {
+  console.log(`[RAG] Question received: "${question}" | Role: ${user?.role || 'Guest'} | Dept: ${user?.department || 'N/A'}`);
+
+  // 0. Resolve authorized document IDs based on user's role and department
+  let authorizedDocIds = null;
+  if (user && user.role !== 'admin') {
+    const docQuery = {
+      status: 'ready',
+      allowedRoles: user.role,
+      $or: [{ department: 'General' }, { department: user.department }],
+    };
+    if (user.role === 'hr') {
+      docQuery.$or = [{ department: 'HR' }, { department: 'General' }, { department: user.department }];
+    }
+
+    const authorizedDocs = await Document.find(docQuery).select('_id').lean();
+
+    authorizedDocIds = authorizedDocs.map((d) => d._id);
+
+    // If user has 0 authorized documents, fallback immediately without searching or calling Gemini
+    if (authorizedDocIds.length === 0) {
+      console.log(`[RAG] Access Filter: User has 0 authorized documents.`);
+      return {
+        answer: "I couldn't find this information in the documents you have access to.",
+        sources: [],
+      };
+    }
+  }
 
   // 1. Generate query embedding
   console.log(`[RAG] Generating query embedding...`);
   const queryVector = await generateEmbedding(question);
 
-  // 2. Search MongoDB Vector Database
-  console.log(`[RAG] Searching vector database...`);
-  const results = await searchSimilarChunks(queryVector, {
+  // 2. Search MongoDB Vector Database with access filter
+  console.log(`[RAG] Searching vector database with access control filter...`);
+  const searchOptions = {
     limit: TOP_K,
     numCandidates: 100,
-  });
+  };
+
+  if (authorizedDocIds && authorizedDocIds.length > 0) {
+    searchOptions.filter = { documentId: { $in: authorizedDocIds } };
+  }
+
+  const results = await searchSimilarChunks(queryVector, searchOptions);
   console.log(`[RAG] Retrieved ${results.length} chunks.`);
 
+  // Security double-check: ensure no unauthorized chunk passes through
+  let secureResults = results;
+  if (authorizedDocIds && authorizedDocIds.length > 0) {
+    const idSet = new Set(authorizedDocIds.map((id) => id.toString()));
+    secureResults = results.filter((chunk) => idSet.has(chunk.documentId.toString()));
+  }
+
   // 3. Apply relevance threshold
-  const relevantChunks = results.filter((chunk) => chunk.score >= MIN_RELEVANCE_SCORE);
+  const relevantChunks = secureResults.filter((chunk) => chunk.score >= MIN_RELEVANCE_SCORE);
   console.log(`[RAG] ${relevantChunks.length} chunks passed relevance threshold (>= ${MIN_RELEVANCE_SCORE}).`);
 
   // 4. Handle No Relevant Information
   if (relevantChunks.length === 0) {
-    console.log(`[RAG] Fallback: No relevant chunks found.`);
+    console.log(`[RAG] Fallback: No relevant authorized chunks found.`);
     return {
-      answer: "I couldn't find this information in the available company policies.",
+      answer: "I couldn't find this information in the documents you have access to.",
       sources: []
     };
   }

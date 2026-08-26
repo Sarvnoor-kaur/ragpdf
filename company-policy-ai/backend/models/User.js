@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: {
-        values: ['admin', 'hr', 'employee'],
+        values: ['admin', 'hr', 'manager', 'employee'],
         message: '{VALUE} is not a supported role',
       },
       default: 'employee',
@@ -30,10 +30,10 @@ const userSchema = new mongoose.Schema(
     department: {
       type: String,
       enum: {
-        values: ['HR', 'IT', 'Finance', 'Engineering', 'Marketing', 'Management'],
+        values: ['HR', 'IT', 'Finance', 'Engineering', 'Marketing', 'Management', 'Sales', 'General'],
         message: '{VALUE} is not a supported department',
       },
-      default: 'Engineering',
+      default: 'General',
     },
   },
   {

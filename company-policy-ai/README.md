@@ -282,7 +282,32 @@ db.chunks.find({ documentId: ObjectId("...") })
 - [x] **Step 4** — MongoDB Vector Search index + Semantic similarity search
 - [x] **Step 5** — RAG chatbot with Gemini LLM
 - [x] **Day 11** — Citations & Persistent Chat History
+- [x] **Day 12** — Role-Based + Department-Based Document Access (RBAC + ABAC)
 - [ ] **Step 6** — n8n workflow automation
+
+---
+
+## Day 12: Role-Based + Department-Based Document Access
+
+### Key Features Added:
+1. **Access Control Model (RBAC + ABAC)**:
+   - **Roles**: `admin`, `hr`, `manager`, `employee`
+   - **Departments**: `HR`, `IT`, `Finance`, `Engineering`, `Marketing`, `Management`, `Sales`, `General`
+   - **Document Access Rules**:
+     - `admin`: Access to ALL documents across ALL departments.
+     - `hr`, `manager`, `employee`: Access restricted to documents matching user's department (or `General`) **AND** containing their role in `allowedRoles`.
+
+2. **MongoDB Atlas Vector Search Pre-Filtering**:
+   - Authorized document IDs are resolved dynamically on the backend based on `req.user` (from JWT).
+   - `$vectorSearch` is executed with `filter: { documentId: { $in: authorizedDocIds } }`.
+   - Zero Data Leakage: Unauthorized chunks are excluded at the database level and never passed to Gemini.
+
+3. **Secure API Authorization**:
+   - `getDocuments`: Users only receive metadata for documents they are authorized to view.
+   - `getDocumentById` & `deleteDocument`: Non-admin users are blocked from viewing or modifying unauthorized resources with `403 Forbidden`.
+
+4. **Upload UI Update**:
+   - Added **Allowed Roles** checkboxes (`admin`, `hr`, `manager`, `employee`) and expanded department choices in the upload form.
 
 ---
 
