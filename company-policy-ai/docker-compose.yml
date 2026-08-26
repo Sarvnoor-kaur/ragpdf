@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ragpdf-backend
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    networks:
+      - ragpdf-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Crucial for Vite build process to know where the API is.
+        # This is for the browser, so it MUST be localhost, not the container name.
+        VITE_API_URL: http://localhost:5001/api
+    container_name: ragpdf-frontend
+    ports:
+      - "5173:80" # Map host port 5173 to container nginx port 80
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - ragpdf-network
+
+networks:
+  ragpdf-network:
+    driver: bridge
