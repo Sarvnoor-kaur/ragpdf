@@ -281,7 +281,33 @@ db.chunks.find({ documentId: ObjectId("...") })
 - [x] **Step 3** — Gemini embeddings for chunks
 - [x] **Step 4** — MongoDB Vector Search index + Semantic similarity search
 - [x] **Step 5** — RAG chatbot with Gemini LLM
+- [x] **Day 11** — Citations & Persistent Chat History
 - [ ] **Step 6** — n8n workflow automation
+
+---
+
+## Day 11: Citations & Persistent Chat History
+
+### Key Features Added:
+1. **Persistent Conversation History**:
+   - `Conversation` MongoDB schema stores full message history (`userId`, `title`, `messages: [{ role, content, sources, createdAt }]`).
+   - Strict **User Isolation**: Users can only read, write, or delete their own chat conversations.
+   - Automatic Title Generation: Conversations are assigned a clean title based on the first question.
+
+2. **Accurate Citations & Deduplication**:
+   - Sources are derived directly from MongoDB chunk metadata (`documentName`, `page`, `chunkId`, `score`). Gemini does NOT invent citation page numbers.
+   - Sources are automatically deduplicated by Document Name + Page number (`📄 LeavePolicy.pdf — Page 4`).
+
+3. **API Endpoints**:
+   - `POST /api/chat`: Create a new empty conversation
+   - `GET /api/chat`: List user conversations sorted by `updatedAt`
+   - `GET /api/chat/:id`: Retrieve single conversation with full message stream
+   - `POST /api/chat/:id/message`: Process question via RAG, save user & assistant messages, return answer + citations
+   - `DELETE /api/chat/:id`: Delete conversation
+
+4. **UI Overhaul**:
+   - Responsive Chat Sidebar with `+ New Chat`, active chat selection, and delete controls.
+   - Re-loads conversations after browser refresh.
 
 ---
 

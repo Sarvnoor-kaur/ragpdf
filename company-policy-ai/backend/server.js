@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import ragRoutes from './routes/ragRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 
 
 // Load environment variables
@@ -30,6 +31,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/rag', ragRoutes);
+app.use('/api/chat', chatRoutes);
 
 
 // Health check route
