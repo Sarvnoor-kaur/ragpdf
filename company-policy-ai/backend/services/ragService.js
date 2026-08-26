@@ -58,9 +58,14 @@ export const generateRAGAnswer = async (question, user = null) => {
       docQuery.$or = [{ department: 'HR' }, { department: 'General' }, { department: user.department }];
     }
 
-    const authorizedDocs = await Document.find(docQuery).select('_id').lean();
+    const authorizedDocs = await Document.find(docQuery).select('_id title allowedRoles department').lean();
 
     authorizedDocIds = authorizedDocs.map((d) => d._id);
+
+    console.log(`[RAG] Authorized docs for role="${user.role}" dept="${user.department}":`);
+    authorizedDocs.forEach((d) => {
+      console.log(`  - "${d.title}" | dept: ${d.department} | allowedRoles: [${d.allowedRoles}]`);
+    });
 
     // If user has 0 authorized documents, fallback immediately without searching or calling Gemini
     if (authorizedDocIds.length === 0) {
