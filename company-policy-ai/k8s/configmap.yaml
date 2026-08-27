@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ragpdf-config
+  namespace: ragpdf
+data:
+  # Set minimum score for RAG
+  RAG_MIN_SCORE: "0.70"
+  
+  # For the backend to know the allowed origin for CORS
+  # Since both frontend and backend will be served from the same domain in production,
+  # you should set this to your actual public EC2 domain/IP, or leave it if frontend relies on same-origin.
+  # If you don't have a domain yet, replace with http://<YOUR_EC2_PUBLIC_IP>
+  CLIENT_URL: "http://REPLACE_ME_EC2_PUBLIC_IP"

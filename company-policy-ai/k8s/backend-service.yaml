@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ragpdf-backend-svc
+  namespace: ragpdf
+  labels:
+    app: ragpdf-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: ragpdf-backend
+  ports:
+  - port: 5001
+    targetPort: 5001
+    protocol: TCP

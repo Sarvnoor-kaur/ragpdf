@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ragpdf-frontend-svc
+  namespace: ragpdf
+  labels:
+    app: ragpdf-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: ragpdf-frontend
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP

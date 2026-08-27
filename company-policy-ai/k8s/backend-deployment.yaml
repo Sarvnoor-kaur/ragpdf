@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ragpdf-backend
+  namespace: ragpdf
+  labels:
+    app: ragpdf-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ragpdf-backend
+  template:
+    metadata:
+      labels:
+        app: ragpdf-backend
+    spec:
+      containers:
+      - name: backend
+        image: sarvnoorkaur/ragpdf-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5001
+        env:
+        - name: PORT
+          value: "5001"
+        - name: RAG_MIN_SCORE
+          valueFrom:
+            configMapKeyRef:
+              name: ragpdf-config
+              key: RAG_MIN_SCORE
+        - name: CLIENT_URL
+          valueFrom:
+            configMapKeyRef:
+              name: ragpdf-config
+              key: CLIENT_URL
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: ragpdf-secrets
+              key: MONGODB_URI
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ragpdf-secrets
+              key: JWT_SECRET
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ragpdf-secrets
+              key: GEMINI_API_KEY
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5001
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5001
+          initialDelaySeconds: 5
+          periodSeconds: 10

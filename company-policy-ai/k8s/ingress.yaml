@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ragpdf-ingress
+  namespace: ragpdf
+  annotations:
+    # Use Traefik, which is built into K3s
+    kubernetes.io/ingress.class: traefik
+    
+    # Configure Traefik to rewrite the path for /api calls if necessary
+    # Since the backend already expects routes to start with /api (e.g. app.use('/api/auth', ...))
+    # we DO NOT need a rewrite-target. We just pass the /api prefix directly to the backend pod.
+spec:
+  rules:
+  - http:
+      paths:
+      # Route /api to the backend service
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: ragpdf-backend-svc
+            port:
+              number: 5001
+              
+      # Route everything else (/) to the frontend service
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ragpdf-frontend-svc
+            port:
+              number: 80
