@@ -11,4 +11,4 @@ data:
   # Since both frontend and backend will be served from the same domain in production,
   # you should set this to your actual public EC2 domain/IP, or leave it if frontend relies on same-origin.
   # If you don't have a domain yet, replace with http://<YOUR_EC2_PUBLIC_IP>
-  CLIENT_URL: "http://REPLACE_ME_EC2_PUBLIC_IP"
+  CLIENT_URL: "http://13.206.80.92"
