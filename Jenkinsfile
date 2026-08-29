@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        DOCKERHUB_CREDENTIALS = 'dockerhub-creds'
+        DOCKERHUB_CREDENTIALS = 'dockerhub'
         DOCKERHUB_USERNAME = 'sarvnoorkaur'
         BACKEND_IMAGE = "${DOCKERHUB_USERNAME}/ragpdf-backend:latest"
         FRONTEND_IMAGE = "${DOCKERHUB_USERNAME}/ragpdf-frontend:latest"
