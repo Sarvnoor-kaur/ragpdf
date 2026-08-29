@@ -14,7 +14,7 @@ COPY . .
 # ARG is used so we can pass VITE_API_URL during docker build/compose
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
-
+# docker build --build-arg VITE_API_URL=/api -t sarvnoorkaur/ragpdf-frontend:latest ./company-policy-ai/frontend
 RUN npm run build
 
 # Stage 2: Serve the application with Nginx
