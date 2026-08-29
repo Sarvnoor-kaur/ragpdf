@@ -8,7 +8,7 @@ pipeline {
         FRONTEND_IMAGE = "${DOCKERHUB_USERNAME}/ragpdf-frontend:latest"
         
         // Ensure you define this parameter in your Jenkins job or replace it with actual IP
-        EC2_PUBLIC_IP = '13.206.80.92' 
+        EC2_PUBLIC_IP = '13.233.203.127' 
         SSH_CREDENTIALS_ID = 'ec2-ssh'
         SSH_USER = 'ubuntu'
     }
