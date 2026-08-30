@@ -24,6 +24,29 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube Analysis...'
+                // Note: Make sure "SonarQubeServer" and "SonarScanner" are configured in Jenkins!
+                withSonarQubeEnv('SonarQubeServer') {
+                    script {
+                        def scannerHome = tool 'SonarScanner'
+                        bat "${scannerHome}\\bin\\sonar-scanner.bat"
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                echo 'Waiting for SonarQube Quality Gate to pass...'
+                timeout(time: 10, unit: 'MINUTES') {
+                    // Fails the pipeline if the code does not pass the Quality Gate
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Build Backend Image') {
             steps {
                 echo 'Building backend Docker image...'
