@@ -19,3 +19,19 @@ Thumbs.db
 .vscode/
 .idea/
 k8s/secret.yaml
+
+
+
+# installed the sonarqube container locally using this docker run command - 
+# docker run -d `                                        
+# >>   --name sonarqube `                                                                                    
+# >>   -p 9000:9000 `
+# >>   sonarqube:lts-community
+
+# to test sonarqube locally in docker by going in the exact pwd where backend folder is there
+
+# docker run --rm -e SONAR_HOST_URL="http://host.docker.internal:9000" -e SONAR_TOKEN="squ_57cd9323beac597acf82740d9664c40870ef9897" -v "${PWD}:/usr/src" sonarsource/sonar-scanner-cli
+# >>
+
+
+# for jenkins i have installed the sonarqube scanner pluggin then add the sonarqube URL and token there in system inside mange jenkins and select the sonarqubeserver which i have put tokn inside the credentials option in manage genkins in secret text then run the pipeline it will automatically run the sonarqube analysis on the backend code and if the code quality is not good then it will fail the pipeline and send the result to the sonarqube server.
