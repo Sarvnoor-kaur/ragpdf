@@ -251,9 +251,9 @@ const UploadForm = ({ onSuccess, onClose }) => {
 
           {/* Submit */}
           <button
-            id="upload-submit"
             type="submit"
             disabled={uploading}
+            data-testid="upload-submit-btn"
             className="w-full bg-gradient-to-r from-accentIndigo to-accentViolet text-white font-semibold py-3 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
           >
             {uploading ? (
@@ -408,6 +408,7 @@ const AdminDocuments = () => {
           </div>
           <button
             id="open-upload-modal"
+            data-testid="open-upload-modal"
             onClick={() => setShowUpload(true)}
             className="flex items-center gap-2 bg-gradient-to-r from-accentIndigo to-accentViolet text-white font-semibold px-5 py-2.5 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-accentIndigo/20 cursor-pointer whitespace-nowrap"
           >

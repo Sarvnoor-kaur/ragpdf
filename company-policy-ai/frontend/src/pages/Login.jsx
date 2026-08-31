@@ -71,6 +71,7 @@ const Login = () => {
                 </div>
                 <input
                   type="email"
+                  data-testid="login-email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#131b2e] border border-slate-800 focus:border-accentIndigo/60 focus:ring-1 focus:ring-accentIndigo/60 rounded-xl pl-11 pr-4 py-3 text-slate-100 placeholder-slate-500 outline-none transition-all text-sm"
@@ -90,6 +91,7 @@ const Login = () => {
                 </div>
                 <input
                   type="password"
+                  data-testid="login-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-[#131b2e] border border-slate-800 focus:border-accentIndigo/60 focus:ring-1 focus:ring-accentIndigo/60 rounded-xl pl-11 pr-4 py-3 text-slate-100 placeholder-slate-500 outline-none transition-all text-sm"
@@ -101,6 +103,7 @@ const Login = () => {
 
             <button
               type="submit"
+              data-testid="login-submit"
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-accentBlue via-accentIndigo to-accentViolet text-white font-medium py-3 px-4 rounded-xl shadow-lg hover:shadow-indigo-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group text-sm disabled:opacity-50"
             >

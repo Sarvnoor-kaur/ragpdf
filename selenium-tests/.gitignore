@@ -1,0 +1,27 @@
+# Selenium E2E Tests — .gitignore
+
+# Python virtual environment
+venv/
+.venv/
+env/
+
+# Python byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# pytest cache
+.pytest_cache/
+.cache/
+
+# HTML test reports
+report.html
+
+# Screenshots captured on test failure
+screenshots/
+
+# Environment variable files (never commit credentials)
+.env
+*.env
+
+# Test data — generated PDFs can be excluded if desired
+# test_data/*.pdf

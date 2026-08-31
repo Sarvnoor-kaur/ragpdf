@@ -74,6 +74,7 @@ const Register = () => {
                 </div>
                 <input
                   type="text"
+                  data-testid="register-name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-[#131b2e] border border-slate-800 focus:border-accentIndigo/60 focus:ring-1 focus:ring-accentIndigo/60 rounded-xl pl-11 pr-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition-all text-sm"
@@ -93,6 +94,7 @@ const Register = () => {
                 </div>
                 <input
                   type="email"
+                  data-testid="register-email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#131b2e] border border-slate-800 focus:border-accentIndigo/60 focus:ring-1 focus:ring-accentIndigo/60 rounded-xl pl-11 pr-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition-all text-sm"
@@ -112,6 +114,7 @@ const Register = () => {
                 </div>
                 <input
                   type="password"
+                  data-testid="register-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-[#131b2e] border border-slate-800 focus:border-accentIndigo/60 focus:ring-1 focus:ring-accentIndigo/60 rounded-xl pl-11 pr-4 py-2.5 text-slate-100 placeholder-slate-500 outline-none transition-all text-sm"
@@ -133,6 +136,7 @@ const Register = () => {
                   </div>
                   <select
                     value={role}
+                    data-testid="register-role"
                     onChange={(e) => setRole(e.target.value)}
                     className="w-full bg-[#131b2e] border border-slate-800 focus:border-accentIndigo/60 focus:ring-1 focus:ring-accentIndigo/60 rounded-xl pl-9 pr-3 py-2.5 text-slate-100 outline-none transition-all text-sm cursor-pointer"
                   >
@@ -153,6 +157,7 @@ const Register = () => {
                   </div>
                   <select
                     value={department}
+                    data-testid="register-department"
                     onChange={(e) => setDepartment(e.target.value)}
                     className="w-full bg-[#131b2e] border border-slate-800 focus:border-accentIndigo/60 focus:ring-1 focus:ring-accentIndigo/60 rounded-xl pl-9 pr-3 py-2.5 text-slate-100 outline-none transition-all text-sm cursor-pointer"
                   >
@@ -169,6 +174,7 @@ const Register = () => {
 
             <button
               type="submit"
+              data-testid="register-submit"
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-accentBlue via-accentIndigo to-accentViolet text-white font-medium py-3 px-4 rounded-xl shadow-lg hover:shadow-indigo-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group text-sm mt-2 disabled:opacity-50"
             >

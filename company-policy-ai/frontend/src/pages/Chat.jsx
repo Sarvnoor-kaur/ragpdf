@@ -429,6 +429,7 @@ const getConvId = (conv) => conv?.id || conv?._id;
           <form onSubmit={handleSend} className="max-w-3xl mx-auto flex items-center gap-2">
             <input
               type="text"
+              data-testid="chat-input"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask about company policies..."
@@ -437,6 +438,7 @@ const getConvId = (conv) => conv?.id || conv?._id;
             />
             <button
               type="submit"
+              data-testid="chat-submit"
               disabled={loading || !question.trim()}
               className="bg-gradient-to-r from-accentIndigo to-accentViolet hover:opacity-90 text-white font-semibold p-3 rounded-xl transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center shrink-0 shadow-lg shadow-accentIndigo/20"
               title="Send Message"

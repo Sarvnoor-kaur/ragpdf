@@ -38,6 +38,7 @@ const Dashboard = () => {
             </div>
             <button
               onClick={logout}
+              data-testid="logout-button"
               className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700/80 text-slate-300 font-medium px-4 py-2 rounded-xl transition-all text-sm border border-slate-700/50 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
@@ -182,6 +183,7 @@ const Dashboard = () => {
 
                   <button
                     onClick={() => navigate('/chat')}
+                    data-testid="go-to-chat"
                     className="mt-5 px-6 py-3 bg-gradient-to-r from-accentIndigo to-accentViolet text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-accentIndigo/20 cursor-pointer flex items-center gap-2"
                   >
                     <MessageSquare className="w-4 h-4" />
