@@ -6,7 +6,9 @@ pipeline {
         DOCKERHUB_USERNAME = 'sarvnoorkaur'
         BACKEND_IMAGE = "${DOCKERHUB_USERNAME}/ragpdf-backend:latest"
         FRONTEND_IMAGE = "${DOCKERHUB_USERNAME}/ragpdf-frontend:latest"
-
+        // Tool paths for Syft and Grype (absolute paths for Windows service account)
+        SYFT_PATH = 'C:\\Users\\sarvn\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Anchore.Syft_Microsoft.Winget.Source_8wekyb3d8bbwe\\syft.exe'
+        GRYPE_PATH = 'C:\\Users\\sarvn\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Anchore.Grype_Microsoft.Winget.Source_8wekyb3d8bbwe\\grype.exe'
         EC2_PUBLIC_IP = '13.233.203.127'
         SSH_CREDENTIALS_ID = 'ec2-ssh'
         SSH_USER = 'ubuntu'
@@ -60,7 +62,23 @@ pipeline {
                 bat "docker build --build-arg VITE_API_URL=/api -t ${FRONTEND_IMAGE} ./company-policy-ai/frontend"
             }
         }
+        stage('Generate SBOM - Syft') {
+            steps {
+                echo 'Generating CycloneDX SBOMs with Syft...'
+                bat "${SYFT_PATH} packages docker:${BACKEND_IMAGE} -o cyclonedx-json=sbom-backend.cdx.json"
+                bat "${SYFT_PATH} packages docker:${FRONTEND_IMAGE} -o cyclonedx-json=sbom-frontend.cdx.json"
+            }
+        }
 
+        stage('Vulnerability Scan - Grype') {
+            steps {
+                echo 'Scanning SBOMs with Grype for vulnerabilities...'
+                // Backend scan
+                bat "${GRYPE_PATH} sbom:sbom-backend.cdx.json --fail-on high -o json=grype-backend.json -o table=grype-backend.txt"
+                // Frontend scan
+                bat "${GRYPE_PATH} sbom:sbom-frontend.cdx.json --fail-on high -o json=grype-frontend.json -o table=grype-frontend.txt"
+            }
+        }
         stage('Push to Docker Hub') {
             steps {
                 echo 'Logging into Docker Hub...'
@@ -136,7 +154,9 @@ pipeline {
         always {
             echo 'Pipeline finished. Cleaning up workspace and docker credentials...'
 
-            bat "docker logout"
+                // Archive SBOM and Grype reports regardless of success or failure
+                archiveArtifacts artifacts: 'sbom-*.cdx.json, grype-*.json, grype-*.txt', fingerprint: true
+                bat "docker logout"
 
             cleanWs()
         }
