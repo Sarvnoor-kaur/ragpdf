@@ -49,7 +49,32 @@ pipeline {
             }
         }
 
-        stage('Build Backend Image') {
+        stage('Gitleaks Secret Scan') {
+    steps {
+        script {
+            echo 'Running Gitleaks secret scan on source...'
+            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                bat "gitleaks detect --source . --redact --report-format json --report-path gitleaks-report.json --exit-code 0"
+            }
+            if (fileExists('gitleaks-report.json')) {
+                echo 'Gitleaks source scan completed. Report: gitleaks-report.json'
+            } else {
+                echo 'Warning: Gitleaks source report not generated.'
+            }
+
+            echo 'Running Gitleaks secret scan on Git history...'
+            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                bat "gitleaks detect --source . --redact --report-format json --report-path gitleaks-history-report.json --exit-code 0 --log-opts=\"--all\""
+            }
+            if (fileExists('gitleaks-history-report.json')) {
+                echo 'Gitleaks history scan completed. Report: gitleaks-history-report.json'
+            } else {
+                echo 'Warning: Gitleaks history report not generated.'
+            }
+        }
+    }
+}
+stage('Build Backend Image') {
             steps {
                 echo 'Building backend Docker image...'
                 bat "docker build -t ${BACKEND_IMAGE} ./company-policy-ai/backend"
