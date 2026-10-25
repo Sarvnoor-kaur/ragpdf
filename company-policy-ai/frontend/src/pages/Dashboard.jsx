@@ -2,205 +2,264 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  LogOut, User, Mail, Shield, Building, Cpu,
-  MessageSquare, FolderOpen, ArrowRight, Upload,
+  User,
+  Mail,
+  Shield,
+  Building,
+  MessageSquare,
+  Sparkles,
+  ArrowRight,
+  Calendar,
+  Lock,
+  CheckCircle2,
 } from 'lucide-react';
+import DashboardLayout from '../components/DashboardLayout';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const isAdminOrHr = user?.role === 'admin' || user?.role === 'hr';
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] flex flex-col text-slate-100">
-      {/* Header / Navigation */}
-      <header className="border-b border-slate-800 bg-[#0f172a]/60 backdrop-blur-md sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 bg-gradient-to-tr from-accentIndigo to-accentViolet rounded-xl flex items-center justify-center shadow-lg shadow-accentIndigo/20">
-              <Cpu className="w-5.5 h-5.5 text-white" />
-            </div>
-            <div>
-              <span className="font-bold tracking-tight text-white block text-sm sm:text-base font-display">
-                Company Policy AI
-              </span>
-              <span className="text-[10px] text-accentIndigo font-semibold uppercase tracking-wider block -mt-1">
-                Assistant Platform
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex flex-col text-right">
-              <span className="text-sm font-semibold text-white">{user?.name}</span>
-              <span className="text-xs text-slate-400 capitalize">{user?.role}</span>
-            </div>
-            <button
-              onClick={logout}
-              data-testid="logout-button"
-              className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700/80 text-slate-300 font-medium px-4 py-2 rounded-xl transition-all text-sm border border-slate-700/50 cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Logout</span>
-            </button>
-          </div>
+    <DashboardLayout user={user} logout={logout}>
+      {/* Welcome Hero Section */}
+      <div className="mb-8">
+        <div className="mb-2">
+          <span className="text-xs font-semibold text-primaryAccent uppercase tracking-wider">
+            YOUR WORKSPACE
+          </span>
         </div>
-      </header>
+        <h1 className="text-3xl lg:text-4xl font-bold text-primaryText mb-2">
+          {getGreeting()}, {user?.name} 👋
+        </h1>
+        <p className="text-secondaryText text-base">
+          Your intelligent workspace for company policies, compliance, and organizational knowledge.
+        </p>
+      </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-display mb-1.5">
-            Welcome, {user?.name}
-          </h2>
-          <p className="text-slate-400 text-sm">
-            Access and manage company policies using the unified assistant dashboard.
-          </p>
-        </div>
+      {/* Main AI Assistant Hero Card */}
+      <div className="mb-8">
+        <div className="relative bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100 rounded-2xl p-8 lg:p-10 overflow-hidden shadow-sm">
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primaryAccent/10 to-secondaryAccent/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-purple-100/50 to-transparent rounded-full blur-2xl" />
 
-        {/* Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* User Profile Info Card */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
-            {/* Visual gradient accent */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-accentIndigo/10 rounded-full blur-2xl"></div>
-
+          <div className="relative grid lg:grid-cols-2 gap-8 items-center">
+            {/* Left Content */}
             <div>
-              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                <User className="w-5 h-5 text-accentIndigo" />
-                <span>User Profile</span>
-              </h3>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3 bg-[#131b2e]/50 border border-slate-800/80 p-3 rounded-xl">
-                  <Mail className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Email Address</span>
-                    <span className="text-sm font-medium text-slate-200">{user?.email}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 bg-[#131b2e]/50 border border-slate-800/80 p-3 rounded-xl">
-                  <Shield className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Platform Role</span>
-                    <span className="text-sm font-medium text-slate-200 capitalize">{user?.role}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 bg-[#131b2e]/50 border border-slate-800/80 p-3 rounded-xl">
-                  <Building className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Department</span>
-                    <span className="text-sm font-medium text-slate-200">{user?.department}</span>
-                  </div>
-                </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-full border border-purple-200 mb-4">
+                <Sparkles className="w-4 h-4 text-primaryAccent" />
+                <span className="text-xs font-semibold text-primaryAccent">AI-POWERED</span>
               </div>
-            </div>
 
-            <div className="mt-8 pt-4 border-t border-slate-800/60 text-center">
-              <span className="text-[11px] text-slate-500">
-                Registered on: {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-              </span>
-            </div>
-          </div>
+              <h2 className="text-2xl lg:text-3xl font-bold text-primaryText mb-3">
+                Your Company Policy Assistant
+              </h2>
 
-          {/* Right column — stacks vertically */}
-          <div className="lg:col-span-2 flex flex-col gap-8">
-            {/* Document Management Card — visible to admin and hr only */}
-            {isAdminOrHr && (
-              <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-                <div className="absolute -top-6 -right-6 w-32 h-32 bg-accentIndigo/10 rounded-full blur-3xl" />
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-2xl bg-accentIndigo/15 flex items-center justify-center">
-                      <FolderOpen className="w-5 h-5 text-accentIndigo" />
-                    </div>
-                    <div>
-                      <h3 className="text-base font-bold text-white">Document Management</h3>
-                      <p className="text-xs text-slate-400 mt-0.5">Step 2 · PDF Upload &amp; Extraction</p>
-                    </div>
-                  </div>
-                  <span className="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider">
-                    Live
-                  </span>
-                </div>
+              <p className="text-secondaryText text-base mb-6 leading-relaxed">
+                Get clear, reliable answers from your organization's policies, powered by AI.
+              </p>
 
-                <p className="text-slate-400 text-sm mb-5">
-                  Upload company policy PDFs. Text is extracted, chunked, and stored in MongoDB ready for the AI knowledge base.
+              {/* Example Question Preview */}
+              <div className="bg-white/80 backdrop-blur-sm border border-purple-200 rounded-xl p-4 mb-6">
+                <p className="text-xs font-semibold text-secondaryText mb-2 uppercase tracking-wide">
+                  Try asking:
                 </p>
+                <p className="text-sm text-primaryText italic">
+                  "What is our remote work policy?"
+                </p>
+              </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                  {[
-                    { icon: Upload, text: 'PDF Upload with validation' },
-                    { icon: FolderOpen, text: 'Text extraction (pdf-parse)' },
-                    { icon: Cpu, text: 'Sliding window chunking' },
-                    { icon: Building, text: 'Department tagging' },
-                  ].map(({ icon: Icon, text }) => (
-                    <div key={text} className="flex items-center gap-2 text-xs text-slate-400 bg-[#131b2e]/50 border border-slate-800 rounded-xl px-3 py-2.5">
-                      <Icon className="w-3.5 h-3.5 text-accentIndigo shrink-0" />
-                      {text}
-                    </div>
-                  ))}
-                </div>
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => navigate('/chat')}
+                  data-testid="go-to-chat"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primaryAccent to-secondaryAccent text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primaryAccent/25 transition-all"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  <span>Open AI Assistant</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
 
                 <button
-                  id="go-to-documents"
-                  onClick={() => navigate('/admin/documents')}
-                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-accentIndigo to-accentViolet text-white font-semibold py-3 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-accentIndigo/20 cursor-pointer text-sm"
+                  onClick={() => navigate('/dashboard')}
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-sm text-primaryAccent font-semibold rounded-xl border border-purple-200 hover:bg-white transition-all"
                 >
-                  <FolderOpen className="w-4 h-4" />
-                  Manage Documents
-                  <ArrowRight className="w-4 h-4 ml-1" />
+                  <span>Explore your workspace</span>
                 </button>
               </div>
-            )}
 
-            {/* RAG Bot Status Card */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between flex-1">
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-accentViolet/10 rounded-full blur-3xl"></div>
-
-              <div>
-                <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-accentViolet" />
-                  <span>Company Policy AI Assistant</span>
-                </h3>
-                <p className="text-slate-400 text-xs sm:text-sm mb-6">
-                  Interact with your organizational documentation using AI retrieval.
-                </p>
-
-                {/* Chat Simulation Area */}
-                <div className="bg-[#0b0f19]/80 border border-slate-800 rounded-2xl p-6 min-h-[160px] flex flex-col items-center justify-center text-center">
-                  <div className="w-12 h-12 rounded-full bg-accentViolet/10 flex items-center justify-center text-accentViolet mb-4">
-                    <MessageSquare className="w-6 h-6" />
-                  </div>
-                  <h4 className="text-base font-bold text-slate-200 mb-2">AI Policy Chatbot Ready</h4>
-                  <p className="text-sm text-slate-400 max-w-md">
-                    Ask questions about company policy and get grounded answers with source citations.
-                  </p>
-
-                  <button
-                    onClick={() => navigate('/chat')}
-                    data-testid="go-to-chat"
-                    className="mt-5 px-6 py-3 bg-gradient-to-r from-accentIndigo to-accentViolet text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-accentIndigo/20 cursor-pointer flex items-center gap-2"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    Open AI Policy Assistant (Step 5)
-                  </button>
-                </div>
+              {/* Source Grounding Indicator */}
+              <div className="mt-6 flex items-center gap-2 text-xs text-secondaryText">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+                <span>Answers reference company documents and policies</span>
               </div>
+            </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-500">
-                <span>Status: Day 12 Complete ✓</span>
-                <span>RBAC &amp; ABAC Active</span>
+            {/* Right Decorative Visual */}
+            <div className="hidden lg:flex items-center justify-center">
+              <div className="relative w-64 h-64">
+                <div className="absolute inset-0 bg-gradient-to-br from-primaryAccent to-secondaryAccent rounded-3xl opacity-10 blur-2xl animate-pulse" />
+                <div className="absolute inset-8 bg-gradient-to-br from-primaryAccent to-secondaryAccent rounded-2xl opacity-20" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="w-24 h-24 text-primaryAccent opacity-30" />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Quick Information Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* Account Role Card */}
+        <div className="bg-white border border-border rounded-xl p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+              <Shield className="w-5 h-5 text-blue-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-primaryText">Account Role</h3>
+          </div>
+          <p className="text-2xl font-bold text-primaryText capitalize">{user?.role || 'Employee'}</p>
+          <p className="text-xs text-secondaryText mt-1">Platform access level</p>
+        </div>
+
+        {/* Department Card */}
+        <div className="bg-white border border-border rounded-xl p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+              <Building className="w-5 h-5 text-purple-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-primaryText">Department</h3>
+          </div>
+          <p className="text-2xl font-bold text-primaryText">{user?.department || 'N/A'}</p>
+          <p className="text-xs text-secondaryText mt-1">Your organizational unit</p>
+        </div>
+
+        {/* Security Access Card */}
+        <div className="bg-white border border-border rounded-xl p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+              <Lock className="w-5 h-5 text-green-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-primaryText">Security Access</h3>
+          </div>
+          <p className="text-2xl font-bold text-primaryText">RBAC & ABAC</p>
+          <p className="text-xs text-secondaryText mt-1">Active security controls</p>
+        </div>
+
+        {/* Workspace Status Card */}
+        <div className="bg-white border border-border rounded-xl p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-primaryText">Workspace Status</h3>
+          </div>
+          <p className="text-2xl font-bold text-primaryText">Day 12 Complete</p>
+          <p className="text-xs text-secondaryText mt-1">Development progress</p>
+        </div>
+      </div>
+
+      {/* User Profile Card */}
+      <div className="bg-white border border-border rounded-xl p-6 shadow-sm">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primaryAccent to-secondaryAccent flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+            {user?.name?.charAt(0).toUpperCase() || 'U'}
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-primaryText">{user?.name || 'User'}</h2>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="inline-flex items-center px-2.5 py-1 bg-primaryAccent/10 text-primaryAccent text-xs font-semibold rounded-lg border border-primaryAccent/20 capitalize">
+                {user?.role || 'Employee'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          {/* Email */}
+          <div className="flex items-start gap-3 p-4 bg-mainBg rounded-lg">
+            <Mail className="w-5 h-5 text-secondaryText mt-0.5 shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-secondaryText uppercase tracking-wide mb-1">
+                Email Address
+              </p>
+              <p className="text-sm font-medium text-primaryText break-all">
+                {user?.email || 'N/A'}
+              </p>
+            </div>
+          </div>
+
+          {/* Department */}
+          <div className="flex items-start gap-3 p-4 bg-mainBg rounded-lg">
+            <Building className="w-5 h-5 text-secondaryText mt-0.5 shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-secondaryText uppercase tracking-wide mb-1">
+                Department
+              </p>
+              <p className="text-sm font-medium text-primaryText">
+                {user?.department || 'N/A'}
+              </p>
+            </div>
+          </div>
+
+          {/* Role */}
+          <div className="flex items-start gap-3 p-4 bg-mainBg rounded-lg">
+            <Shield className="w-5 h-5 text-secondaryText mt-0.5 shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-secondaryText uppercase tracking-wide mb-1">
+                Platform Role
+              </p>
+              <p className="text-sm font-medium text-primaryText capitalize">
+                {user?.role || 'Employee'}
+              </p>
+            </div>
+          </div>
+
+          {/* Registration Date */}
+          <div className="flex items-start gap-3 p-4 bg-mainBg rounded-lg">
+            <Calendar className="w-5 h-5 text-secondaryText mt-0.5 shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-secondaryText uppercase tracking-wide mb-1">
+                Registered On
+              </p>
+              <p className="text-sm font-medium text-primaryText">
+                {user?.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })
+                  : 'N/A'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Account Information Section */}
+        <div className="mt-6 pt-6 border-t border-border">
+          <h3 className="text-sm font-semibold text-primaryText mb-3">Account & Security</h3>
+          <div className="flex items-center justify-between p-4 bg-mainBg rounded-lg">
+            <div className="flex items-center gap-3">
+              <Lock className="w-5 h-5 text-success" />
+              <div>
+                <p className="text-sm font-medium text-primaryText">Security Status</p>
+                <p className="text-xs text-secondaryText">RBAC & ABAC authentication active</p>
+              </div>
+            </div>
+            <CheckCircle2 className="w-5 h-5 text-success" />
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 };
 

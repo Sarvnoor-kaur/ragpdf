@@ -6,41 +6,73 @@
   body {
     font-family: 'Inter', sans-serif;
   }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', sans-serif;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Inter', sans-serif;
   }
 }
 
-/* Custom global animations/scrollbars for a premium dark mode feel */
+/* Custom global animations/scrollbars for a premium light mode feel */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #F7F8FC;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #E8EAF2;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #CBD5E1;
 }
 
 /* ─── Landing page animations ─── */
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse-slow {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50%       { opacity: 0.8; transform: scale(1.08); }
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.08);
+  }
 }
 
 @keyframes bounce-slow {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-6px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 .animate-fade-in-up {

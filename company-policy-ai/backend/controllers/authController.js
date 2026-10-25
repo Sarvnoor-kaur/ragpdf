@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
 import User from '../models/User.js';
 
 // Helper to generate JWT token
