@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   Sparkles,
+  BarChart3,
 } from 'lucide-react';
 
 const DashboardSidebar = ({ user, logout }) => {
@@ -22,6 +23,12 @@ const DashboardSidebar = ({ user, logout }) => {
       icon: LayoutDashboard,
       path: '/dashboard',
       active: location.pathname === '/dashboard',
+    },
+    {
+      name: 'Analytics',
+      icon: BarChart3,
+      path: '/analytics',
+      active: location.pathname === '/analytics',
     },
     {
       name: 'AI Policy Assistant',

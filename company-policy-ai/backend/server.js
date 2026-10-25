@@ -7,6 +7,7 @@ import documentRoutes from './routes/documentRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import ragRoutes from './routes/ragRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 
 
 // Load environment variables
@@ -32,6 +33,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/rag', ragRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 
 // Health check route

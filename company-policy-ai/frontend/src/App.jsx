@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import MyProfile from './pages/MyProfile';
+import Analytics from './pages/Analytics';
 import AdminDocuments from './pages/AdminDocuments';
 import DocumentDetails from './pages/DocumentDetails';
 import SearchTest from './pages/SearchTest';
@@ -38,6 +39,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MyProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
               </ProtectedRoute>
             }
           />
