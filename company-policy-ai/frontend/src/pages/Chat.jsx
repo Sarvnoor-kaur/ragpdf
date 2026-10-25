@@ -352,14 +352,14 @@ const Chat = () => {
                   }`}
               >
                 {!isUser && (
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-accentIndigo to-accentViolet flex items-center justify-center shrink-0 shadow-md">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-primaryAccent to-secondaryAccent flex items-center justify-center shrink-0 shadow-md">
                     <Bot className="w-4 h-4 text-white" />
                   </div>
                 )}
 
                 <div
                   className={`rounded-2xl p-4 text-sm leading-relaxed ${isUser
-                    ? 'bg-gradient-to-br from-primaryAccent/10 to-secondaryAccent/10 border border-primaryAccent/20 text-primaryText rounded-tr-sm max-w-[85%]'
+                    ? 'bg-gradient-to-r from-primaryAccent to-secondaryAccent text-white font-medium rounded-tr-sm max-w-[85%] shadow-md'
                     : 'bg-white border border-border text-primaryText rounded-tl-sm max-w-[90%] shadow-sm'
                     }`}
                 >
@@ -430,7 +430,7 @@ const Chat = () => {
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask about company policies..."
               disabled={loading}
-              className="flex-1 bg-mainBg border border-border text-primaryText placeholder-secondaryText rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primaryAccent focus:ring-2 focus:ring-primaryAccent/20 transition-all disabled:opacity-50"
+              className="flex-1 bg-white border border-border text-primaryText placeholder-secondaryText rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primaryAccent focus:ring-2 focus:ring-primaryAccent/20 transition-all disabled:opacity-50"
             />
             <button
               type="submit"
