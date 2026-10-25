@@ -204,7 +204,7 @@ stage('Build Backend Image') {
             echo 'Pipeline finished. Cleaning up workspace and docker credentials...'
 
                 // Archive SBOM and Grype reports regardless of success or failure
-                archiveArtifacts artifacts: 'sbom-*.cdx.json, grype-*.json, grype-*.txt', fingerprint: true
+                archiveArtifacts artifacts: 'sbom-*.cdx.json, grype-*.json, grype-*.txt, gitleaks*.json', fingerprint: true
                 bat "docker logout"
 
             cleanWs()
