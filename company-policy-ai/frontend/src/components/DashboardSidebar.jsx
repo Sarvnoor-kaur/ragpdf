@@ -32,8 +32,8 @@ const DashboardSidebar = ({ user, logout }) => {
     {
       name: 'My Profile',
       icon: User,
-      path: '/dashboard',
-      active: false,
+      path: '/profile',
+      active: location.pathname === '/profile',
     },
   ];
 
@@ -78,8 +78,8 @@ const DashboardSidebar = ({ user, logout }) => {
               key={item.name}
               onClick={() => handleNavigation(item.path)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${item.active
-                  ? 'bg-primaryAccent text-white shadow-sm'
-                  : 'text-secondaryText hover:bg-border hover:text-primaryText'
+                ? 'bg-primaryAccent text-white shadow-sm'
+                : 'text-secondaryText hover:bg-border hover:text-primaryText'
                 }`}
             >
               <Icon className="w-4 h-4 shrink-0" />

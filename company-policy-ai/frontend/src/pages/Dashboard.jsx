@@ -163,99 +163,106 @@ const Dashboard = () => {
             </div>
             <h3 className="text-sm font-semibold text-primaryText">Workspace Status</h3>
           </div>
-          <p className="text-2xl font-bold text-primaryText">Day 12 Complete</p>
-          <p className="text-xs text-secondaryText mt-1">Development progress</p>
+          <p className="text-2xl font-bold text-primaryText">Active</p>
+          <p className="text-xs text-secondaryText mt-1">All systems operational</p>
         </div>
       </div>
 
-      {/* User Profile Card */}
-      <div className="bg-white border border-border rounded-xl p-6 shadow-sm">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primaryAccent to-secondaryAccent flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-            {user?.name?.charAt(0).toUpperCase() || 'U'}
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-primaryText">{user?.name || 'User'}</h2>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="inline-flex items-center px-2.5 py-1 bg-primaryAccent/10 text-primaryAccent text-xs font-semibold rounded-lg border border-primaryAccent/20 capitalize">
-                {user?.role || 'Employee'}
-              </span>
-            </div>
+      {/* Recent Activity & Quick Actions */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Quick Actions Card */}
+        <div className="bg-white border border-border rounded-xl p-6 shadow-sm">
+          <h2 className="text-lg font-bold text-primaryText mb-4">Quick Actions</h2>
+          <div className="space-y-3">
+            <button
+              onClick={() => navigate('/chat')}
+              className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-primaryAccent/10 to-secondaryAccent/10 border border-primaryAccent/20 rounded-lg hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <MessageSquare className="w-5 h-5 text-primaryAccent" />
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-primaryText">Ask AI Assistant</p>
+                  <p className="text-xs text-secondaryText">Get instant policy answers</p>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-primaryAccent group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <button
+              onClick={() => navigate('/profile')}
+              className="w-full flex items-center justify-between p-4 bg-mainBg border border-border rounded-lg hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <User className="w-5 h-5 text-secondaryText" />
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-primaryText">View Profile</p>
+                  <p className="text-xs text-secondaryText">Manage your account</p>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-secondaryText group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            {(user?.role === 'admin' || user?.role === 'hr') && (
+              <button
+                onClick={() => navigate('/admin/documents')}
+                className="w-full flex items-center justify-between p-4 bg-mainBg border border-border rounded-lg hover:shadow-md transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <Building className="w-5 h-5 text-secondaryText" />
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-primaryText">Manage Documents</p>
+                    <p className="text-xs text-secondaryText">Upload & organize policies</p>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-secondaryText group-hover:translate-x-1 transition-transform" />
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* Email */}
-          <div className="flex items-start gap-3 p-4 bg-mainBg rounded-lg">
-            <Mail className="w-5 h-5 text-secondaryText mt-0.5 shrink-0" />
-            <div>
-              <p className="text-xs font-semibold text-secondaryText uppercase tracking-wide mb-1">
-                Email Address
-              </p>
-              <p className="text-sm font-medium text-primaryText break-all">
-                {user?.email || 'N/A'}
-              </p>
-            </div>
-          </div>
-
-          {/* Department */}
-          <div className="flex items-start gap-3 p-4 bg-mainBg rounded-lg">
-            <Building className="w-5 h-5 text-secondaryText mt-0.5 shrink-0" />
-            <div>
-              <p className="text-xs font-semibold text-secondaryText uppercase tracking-wide mb-1">
-                Department
-              </p>
-              <p className="text-sm font-medium text-primaryText">
-                {user?.department || 'N/A'}
-              </p>
-            </div>
-          </div>
-
-          {/* Role */}
-          <div className="flex items-start gap-3 p-4 bg-mainBg rounded-lg">
-            <Shield className="w-5 h-5 text-secondaryText mt-0.5 shrink-0" />
-            <div>
-              <p className="text-xs font-semibold text-secondaryText uppercase tracking-wide mb-1">
-                Platform Role
-              </p>
-              <p className="text-sm font-medium text-primaryText capitalize">
-                {user?.role || 'Employee'}
-              </p>
-            </div>
-          </div>
-
-          {/* Registration Date */}
-          <div className="flex items-start gap-3 p-4 bg-mainBg rounded-lg">
-            <Calendar className="w-5 h-5 text-secondaryText mt-0.5 shrink-0" />
-            <div>
-              <p className="text-xs font-semibold text-secondaryText uppercase tracking-wide mb-1">
-                Registered On
-              </p>
-              <p className="text-sm font-medium text-primaryText">
-                {user?.createdAt
-                  ? new Date(user.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })
-                  : 'N/A'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Account Information Section */}
-        <div className="mt-6 pt-6 border-t border-border">
-          <h3 className="text-sm font-semibold text-primaryText mb-3">Account & Security</h3>
-          <div className="flex items-center justify-between p-4 bg-mainBg rounded-lg">
-            <div className="flex items-center gap-3">
-              <Lock className="w-5 h-5 text-success" />
+        {/* Getting Started Card */}
+        <div className="bg-white border border-border rounded-xl p-6 shadow-sm">
+          <h2 className="text-lg font-bold text-primaryText mb-4">Getting Started</h2>
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center shrink-0 mt-0.5">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+              </div>
               <div>
-                <p className="text-sm font-medium text-primaryText">Security Status</p>
-                <p className="text-xs text-secondaryText">RBAC & ABAC authentication active</p>
+                <p className="text-sm font-semibold text-primaryText">Account Created</p>
+                <p className="text-xs text-secondaryText">Your account is active and ready</p>
               </div>
             </div>
-            <CheckCircle2 className="w-5 h-5 text-success" />
+
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center shrink-0 mt-0.5">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-primaryText">Profile Completed</p>
+                <p className="text-xs text-secondaryText">Your basic information is set up</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-primaryAccent/20 flex items-center justify-center shrink-0 mt-0.5">
+                <Sparkles className="w-4 h-4 text-primaryAccent" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-primaryText">Try AI Assistant</p>
+                <p className="text-xs text-secondaryText">Ask your first policy question</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 opacity-50">
+              <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center shrink-0 mt-0.5">
+                <Lock className="w-4 h-4 text-gray-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-primaryText">Enable 2FA</p>
+                <p className="text-xs text-secondaryText">Add extra security to your account</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
