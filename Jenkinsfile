@@ -9,6 +9,8 @@ pipeline {
         // Tool paths for Syft and Grype (absolute paths for Windows service account)
         SYFT_PATH = 'C:\\Users\\sarvn\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Anchore.Syft_Microsoft.Winget.Source_8wekyb3d8bbwe\\syft.exe'
         GRYPE_PATH = 'C:\\Users\\sarvn\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Anchore.Grype_Microsoft.Winget.Source_8wekyb3d8bbwe\\grype.exe'
+        // Absolute path to Gitleaks executable (installed via WinGet)
+        GITLEAKS_PATH = 'C:\\Users\\sarvn\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gitleaks.Gitleaks_Microsoft.Winget.Source_8wekyb3d8bbwe\\gitleaks.exe'
         EC2_PUBLIC_IP = '13.233.203.127'
         SSH_CREDENTIALS_ID = 'ec2-ssh'
         SSH_USER = 'ubuntu'
@@ -54,7 +56,7 @@ pipeline {
         script {
             echo 'Running Gitleaks secret scan on source...'
             catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                bat "gitleaks detect --source . --redact --report-format json --report-path gitleaks-report.json --exit-code 0"
+                bat "\"${GITLEAKS_PATH}\" detect --source . --redact --report-format json --report-path gitleaks-report.json --exit-code 0"
             }
             if (fileExists('gitleaks-report.json')) {
                 echo 'Gitleaks source scan completed. Report: gitleaks-report.json'
@@ -64,7 +66,7 @@ pipeline {
 
             echo 'Running Gitleaks secret scan on Git history...'
             catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                bat "gitleaks detect --source . --redact --report-format json --report-path gitleaks-history-report.json --exit-code 0 --log-opts=\"--all\""
+                bat "\"${GITLEAKS_PATH}\" detect --source . --redact --report-format json --report-path gitleaks-history-report.json --exit-code 0 --log-opts=\"--all\""
             }
             if (fileExists('gitleaks-history-report.json')) {
                 echo 'Gitleaks history scan completed. Report: gitleaks-history-report.json'
