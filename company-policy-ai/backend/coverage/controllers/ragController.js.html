@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -120,46 +120,46 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -171,34 +171,34 @@
 // POST /api/rag/ask
 // Access: admin, hr, employee
 // ============================================================
-export const askQuestion = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
-  const { question } = <span class="cstat-no" title="statement not covered" >req.body;</span>
+export const askQuestion = async (req, res) =&gt; {
+  const { question } = req.body;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (!question || typeof question !== 'string') {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
+  if (!question || typeof question !== 'string') {
+    return res.status(400).json({
       success: false,
       message: 'A valid question is required.',
     });
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (question.trim().length &lt; 3) {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
+  if (question.trim().length &lt; 3) {
+    return res.status(400).json({
       success: false,
       message: 'Question must be at least 3 characters long.',
     });
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (question.trim().length &gt; 1000) {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(400).json({</span>
+  if (question.trim().length &gt; 1000) {
+    return res.status(400).json({
       success: false,
       message: 'Question must not exceed 1000 characters.',
     });
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  try {</span>
-    const { answer, sources } = <span class="cstat-no" title="statement not covered" >await generateRAGAnswer(question.trim(), req.user);</span>
+  try {
+    const { answer, sources } = await generateRAGAnswer(question.trim(), req.user);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return res.status(200).json({</span>
+    return res.status(200).json({
       success: true,
       data: {
         question: question.trim(),
@@ -207,10 +207,10 @@ export const askQuestion = <span class="cstat-no" title="statement not covered" 
       },
     });
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    console.error('[RAG Controller Error]:', error.message);</span>
+    console.error('[RAG Controller Error]:', error.message);
     
     // Return a generic error to the client to avoid leaking internals
-<span class="cstat-no" title="statement not covered" >    return res.status(500).json({</span>
+    return res.status(500).json({
       success: false,
       message: 'Sorry, I couldn\'t process your question right now. Please try again later.',
     });
@@ -223,7 +223,7 @@ export const askQuestion = <span class="cstat-no" title="statement not covered" 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-18T13:11:28.795Z
+                at 2026-11-18T13:28:47.067Z
             </div>
         <script src="../prettify.js"></script>
         <script>

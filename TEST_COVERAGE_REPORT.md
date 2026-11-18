@@ -1,13 +1,13 @@
 # Test Coverage Improvement Report
 
 ## Summary
-Successfully increased test coverage for the RAGPDF AI Company Policy Assistant project from **33.8% to approximately 45%** across both frontend and backend codebases.
+Successfully increased test coverage for the RAGPDF AI Company Policy Assistant project from **33.8% to approximately 52%** across both frontend and backend codebases.
 
 ## Results
 
-### Backend Coverage: **41.82%**
-- **Test Suites**: 7 passed
-- **Tests**: 73 passed
+### Backend Coverage: **48.93%**
+- **Test Suites**: 10 passed  
+- **Tests**: 110 passed
 - **Status**: ✅ All tests passing
 
 #### Component Breakdown:
@@ -16,16 +16,18 @@ Successfully increased test coverage for the RAGPDF AI Company Policy Assistant 
 | **authController.js** | 97.36% | ✅ Excellent |
 | **authMiddleware.js** | 100% | ✅ Complete |
 | **chatController.js** | 87.83% | ✅ Very Good |
+| **ragController.js** | 100% | ✅ Complete |
+| **searchController.js** | 100% | ✅ Complete |
 | **geminiService.js** | 100% | ✅ Complete |
 | **ragService.js** | 98.71% | ✅ Excellent |
 | **analyticsController.js** | 56.56% | ⚠️ Good |
 | **User.js (Model)** | 94.44% | ✅ Excellent |
+| **Document.js (Model)** | 100% | ✅ Complete |
+| **Chunk.js (Model)** | 100% | ✅ Complete |
+| **Conversation.js (Model)** | 100% | ✅ Complete |
 
 #### Areas Needing Improvement:
-- documentController.js: 0% (complex file upload logic)
-- ragController.js: 0%
-- searchController.js: 0%
-- Models (Chunk, Document, Conversation): 0%
+- documentController.js: 0% (complex file upload logic - ~400 lines)
 - Services (chunkService, embeddingService, vectorSearchService, searchService): 0%
 - Routes: 0% (routes are simple wrappers, tested indirectly through controllers)
 
@@ -51,7 +53,7 @@ Successfully increased test coverage for the RAGPDF AI Company Policy Assistant 
 
 ## New Tests Created
 
-### Backend Tests (6 files, 73 tests):
+### Backend Tests (10 files, 110 tests):
 1. **authController.test.js** (11 tests)
    - User registration with validation
    - User login with credential checking
@@ -234,3 +236,26 @@ Successfully increased test coverage for the RAGPDF AI Company Policy Assistant 
 The test coverage has been significantly improved from 33.8% to approximately 45%, with 86 total tests passing across backend and frontend. The most critical authentication, authorization, and RAG functionality is now well-covered. The testing infrastructure is properly configured for both Jest (backend) and Vitest (frontend), with proper ES module support and Windows compatibility.
 
 **Next Phase**: Focus on documentController, remaining services, and frontend page components to reach the 80% target.
+
+
+6. **ragController.test.js** (8 tests) - **NEW**
+   - Question validation (length, type)
+   - RAG answer generation
+   - User context passing
+   - Error handling
+   - Input trimming
+
+7. **searchController.test.js** (9 tests) - **NEW**
+   - Query parameter validation
+   - Search functionality
+   - Empty results handling
+   - Error scenarios
+   - User context
+
+8. **models.test.js** (20 tests) - **NEW**
+   - Document model schema
+   - Chunk model validation (including 1536-dim embedding)
+   - Conversation model structure
+   - toJSON transformations
+   - Enum validations
+   - Default values

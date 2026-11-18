@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -143,7 +143,7 @@
 <a name='L78'></a><a href='#L78'>78</a>
 <a name='L79'></a><a href='#L79'>79</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -168,7 +168,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -185,7 +185,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -207,21 +207,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import mongoose from 'mongoose';
 &nbsp;
-const sourceSchema = <span class="cstat-no" title="statement not covered" >new mongoose.Schema(</span>
+const sourceSchema = new mongoose.Schema(
   {
     documentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -246,7 +246,7 @@ const sourceSchema = <span class="cstat-no" title="statement not covered" >new m
   { _id: false }
 );
 &nbsp;
-const messageSchema = <span class="cstat-no" title="statement not covered" >new mongoose.Schema({</span>
+const messageSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['user', 'assistant'],
@@ -263,7 +263,7 @@ const messageSchema = <span class="cstat-no" title="statement not covered" >new 
   },
 });
 &nbsp;
-const conversationSchema = <span class="cstat-no" title="statement not covered" >new mongoose.Schema(</span>
+const conversationSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -285,16 +285,16 @@ const conversationSchema = <span class="cstat-no" title="statement not covered" 
 );
 &nbsp;
 // Map _id to id in JSON responses for API consistency
-<span class="cstat-no" title="statement not covered" >conversationSchema.set('toJSON', {</span>
-  transform: <span class="fstat-no" title="function not covered" >fu</span>nction (doc, ret, options) {
-<span class="cstat-no" title="statement not covered" >    ret.id = ret._id;</span>
-<span class="cstat-no" title="statement not covered" >    delete ret._id;</span>
-<span class="cstat-no" title="statement not covered" >    delete ret.__v;</span>
-<span class="cstat-no" title="statement not covered" >    return ret;</span>
+conversationSchema.set('toJSON', {
+  transform: function (doc, ret, options) {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+    return ret;
   },
 });
 &nbsp;
-const Conversation = <span class="cstat-no" title="statement not covered" >mongoose.model('Conversation', conversationSchema);</span>
+const Conversation = mongoose.model('Conversation', conversationSchema);
 &nbsp;
 export default Conversation;
 &nbsp;</pre></td></tr></table></pre>
@@ -304,7 +304,7 @@ export default Conversation;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-18T13:11:28.795Z
+                at 2026-11-18T13:28:47.067Z
             </div>
         <script src="../prettify.js"></script>
         <script>
