@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/587</span>
+                <span class='fraction'>0/588</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/587</span>
+                <span class='fraction'>0/588</span>
             </div>
         
             
@@ -650,7 +650,9 @@
 <a name='L585'></a><a href='#L585'>585</a>
 <a name='L586'></a><a href='#L586'>586</a>
 <a name='L587'></a><a href='#L587'>587</a>
-<a name='L588'></a><a href='#L588'>588</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L588'></a><a href='#L588'>588</a>
+<a name='L589'></a><a href='#L589'>589</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1241,7 +1243,7 @@
 <span class="cstat-no" title="statement not covered" >import { useNavigate, Link } from 'react-router-dom';</span>
 <span class="cstat-no" title="statement not covered" >import {</span>
 <span class="cstat-no" title="statement not covered" >  Upload, FileText, Trash2, Eye, AlertCircle, CheckCircle2,</span>
-<span class="cstat-no" title="statement not covered" >  Loader2, Building, FolderOpen, Cpu, LogOut, X, ChevronRight, Zap, RefreshCw</span>
+<span class="cstat-no" title="statement not covered" >  Loader2, Building, FolderOpen, Cpu, LogOut, X, Zap, RefreshCw</span>
 <span class="cstat-no" title="statement not covered" >} from 'lucide-react';</span>
 <span class="cstat-no" title="statement not covered" >import { useAuth } from '../context/AuthContext';</span>
 <span class="cstat-no" title="statement not covered" >import { uploadDocument, getDocuments, deleteDocument, generateEmbeddings } from '../services/documentService';</span>
@@ -1762,19 +1764,20 @@
 <span class="cstat-no" title="statement not covered" >                              id={`embed-doc-${docId}`}</span>
 <span class="cstat-no" title="statement not covered" >                              onClick={() =&gt; handleGenerateEmbeddings(docId)}</span>
 <span class="cstat-no" title="statement not covered" >                              disabled={embeddingDocId === docId || doc.status === 'ready'}</span>
-<span class="cstat-no" title="statement not covered" >                              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${</span>
-<span class="cstat-no" title="statement not covered" >                                doc.status === 'ready' </span>
-<span class="cstat-no" title="statement not covered" >                                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' </span>
+<span class="cstat-no" title="statement not covered" >                              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${doc.status === 'ready'</span>
+<span class="cstat-no" title="statement not covered" >                                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'</span>
 <span class="cstat-no" title="statement not covered" >                                  : 'bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 cursor-pointer'</span>
-<span class="cstat-no" title="statement not covered" >                              }`}</span>
+<span class="cstat-no" title="statement not covered" >                                }`}</span>
 <span class="cstat-no" title="statement not covered" >                            &gt;</span>
-<span class="cstat-no" title="statement not covered" >                              {embeddingDocId === docId ? (</span>
-<span class="cstat-no" title="statement not covered" >                                &lt;&gt;&lt;RefreshCw className="w-3.5 h-3.5 animate-spin" /&gt; Generating...&lt;/&gt;</span>
-<span class="cstat-no" title="statement not covered" >                              ) : doc.status === 'ready' ? (</span>
-<span class="cstat-no" title="statement not covered" >                                &lt;&gt;&lt;CheckCircle2 className="w-3.5 h-3.5" /&gt; Ready&lt;/&gt;</span>
-<span class="cstat-no" title="statement not covered" >                              ) : (</span>
-<span class="cstat-no" title="statement not covered" >                                &lt;&gt;&lt;Zap className="w-3.5 h-3.5" /&gt; Embed&lt;/&gt;</span>
-<span class="cstat-no" title="statement not covered" >                              )}</span>
+<span class="cstat-no" title="statement not covered" >                              {(() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                                if (embeddingDocId === docId) {</span>
+<span class="cstat-no" title="statement not covered" >                                  return &lt;&gt;&lt;RefreshCw className="w-3.5 h-3.5 animate-spin" /&gt; Generating...&lt;/&gt;;</span>
+<span class="cstat-no" title="statement not covered" >                                }</span>
+<span class="cstat-no" title="statement not covered" >                                if (doc.status === 'ready') {</span>
+<span class="cstat-no" title="statement not covered" >                                  return &lt;&gt;&lt;CheckCircle2 className="w-3.5 h-3.5" /&gt; Ready&lt;/&gt;;</span>
+<span class="cstat-no" title="statement not covered" >                                }</span>
+<span class="cstat-no" title="statement not covered" >                                return &lt;&gt;&lt;Zap className="w-3.5 h-3.5" /&gt; Embed&lt;/&gt;;</span>
+<span class="cstat-no" title="statement not covered" >                              })()}</span>
 <span class="cstat-no" title="statement not covered" >                            &lt;/button&gt;</span>
 <span class="cstat-no" title="statement not covered" >                            &lt;button</span>
 <span class="cstat-no" title="statement not covered" >                              id={`view-doc-${docId}`}</span>
@@ -1831,7 +1834,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-18T13:10:46.335Z
+                at 2026-11-18T15:15:43.315Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

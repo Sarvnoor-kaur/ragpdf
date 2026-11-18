@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/452</span>
+                <span class='fraction'>0/458</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/452</span>
+                <span class='fraction'>0/458</span>
             </div>
         
             
@@ -515,7 +515,19 @@
 <a name='L450'></a><a href='#L450'>450</a>
 <a name='L451'></a><a href='#L451'>451</a>
 <a name='L452'></a><a href='#L452'>452</a>
-<a name='L453'></a><a href='#L453'>453</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L453'></a><a href='#L453'>453</a>
+<a name='L454'></a><a href='#L454'>454</a>
+<a name='L455'></a><a href='#L455'>455</a>
+<a name='L456'></a><a href='#L456'>456</a>
+<a name='L457'></a><a href='#L457'>457</a>
+<a name='L458'></a><a href='#L458'>458</a>
+<a name='L459'></a><a href='#L459'>459</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1313,10 +1325,12 @@
 <span class="cstat-no" title="statement not covered" >          {activeConversation?.messages?.map((msg, idx) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            const isUser = msg.role === 'user';</span>
 <span class="cstat-no" title="statement not covered" >            const uniqueSources = deduplicateSources(msg.sources);</span>
+<span class="cstat-no" title="statement not covered" >            // Create a stable key using message index and first few chars of content</span>
+<span class="cstat-no" title="statement not covered" >            const messageKey = `msg-${idx}-${msg.content.substring(0, 20)}`;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >            return (</span>
 <span class="cstat-no" title="statement not covered" >              &lt;div</span>
-<span class="cstat-no" title="statement not covered" >                key={idx}</span>
+<span class="cstat-no" title="statement not covered" >                key={messageKey}</span>
 <span class="cstat-no" title="statement not covered" >                className={`flex items-start gap-3.5 max-w-3xl mx-auto ${isUser ? 'justify-end' : 'justify-start'</span>
 <span class="cstat-no" title="statement not covered" >                  }`}</span>
 <span class="cstat-no" title="statement not covered" >              &gt;</span>
@@ -1341,16 +1355,20 @@
 <span class="cstat-no" title="statement not covered" >                        &lt;FileText className="w-3.5 h-3.5 text-primaryAccent" /&gt; Sources</span>
 <span class="cstat-no" title="statement not covered" >                      &lt;/h4&gt;</span>
 <span class="cstat-no" title="statement not covered" >                      &lt;div className="flex flex-wrap gap-2"&gt;</span>
-<span class="cstat-no" title="statement not covered" >                        {uniqueSources.map((src, sIdx) =&gt; (</span>
-<span class="cstat-no" title="statement not covered" >                          &lt;div</span>
-<span class="cstat-no" title="statement not covered" >                            key={sIdx}</span>
-<span class="cstat-no" title="statement not covered" >                            className="flex items-center gap-1.5 bg-mainBg border border-border px-2.5 py-1 rounded-lg text-xs font-medium text-primaryText"</span>
-<span class="cstat-no" title="statement not covered" >                          &gt;</span>
-<span class="cstat-no" title="statement not covered" >                            &lt;FileText className="w-3 h-3 text-secondaryText" /&gt;</span>
-<span class="cstat-no" title="statement not covered" >                            &lt;span&gt;{src.documentName}&lt;/span&gt;</span>
-<span class="cstat-no" title="statement not covered" >                            &lt;span className="text-secondaryText font-normal"&gt;• Page {src.page}&lt;/span&gt;</span>
-<span class="cstat-no" title="statement not covered" >                          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >                        ))}</span>
+<span class="cstat-no" title="statement not covered" >                        {uniqueSources.map((src) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >                          // Use stable unique key from documentId, chunkId and page</span>
+<span class="cstat-no" title="statement not covered" >                          const sourceKey = `${src.documentId}-${src.chunkId || src.page || 0}`;</span>
+<span class="cstat-no" title="statement not covered" >                          return (</span>
+<span class="cstat-no" title="statement not covered" >                            &lt;div</span>
+<span class="cstat-no" title="statement not covered" >                              key={sourceKey}</span>
+<span class="cstat-no" title="statement not covered" >                              className="flex items-center gap-1.5 bg-mainBg border border-border px-2.5 py-1 rounded-lg text-xs font-medium text-primaryText"</span>
+<span class="cstat-no" title="statement not covered" >                            &gt;</span>
+<span class="cstat-no" title="statement not covered" >                              &lt;FileText className="w-3 h-3 text-secondaryText" /&gt;</span>
+<span class="cstat-no" title="statement not covered" >                              &lt;span&gt;{src.documentName}&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >                              &lt;span className="text-secondaryText font-normal"&gt;• Page {src.page}&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >                            &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                          );</span>
+<span class="cstat-no" title="statement not covered" >                        })}</span>
 <span class="cstat-no" title="statement not covered" >                      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                    &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  )}</span>
@@ -1426,7 +1444,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-18T13:10:46.547Z
+                at 2026-11-18T15:15:43.517Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
