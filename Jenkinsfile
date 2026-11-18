@@ -11,7 +11,7 @@ pipeline {
         GRYPE_PATH = 'C:\\Users\\sarvn\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Anchore.Grype_Microsoft.Winget.Source_8wekyb3d8bbwe\\grype.exe'
         // Absolute path to Gitleaks executable (installed via WinGet)
         GITLEAKS_PATH = 'C:\\Users\\sarvn\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gitleaks.Gitleaks_Microsoft.Winget.Source_8wekyb3d8bbwe\\gitleaks.exe'
-        EC2_PUBLIC_IP = '13.233.203.127'
+        EC2_PUBLIC_IP = '13.205.64.224'
         SSH_CREDENTIALS_ID = 'ec2-ssh'
         SSH_USER = 'ubuntu'
 
