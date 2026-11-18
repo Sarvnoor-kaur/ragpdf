@@ -1,13 +1,13 @@
 # Test Coverage Improvement Report
 
 ## Summary
-Successfully increased test coverage for the RAGPDF AI Company Policy Assistant project from **33.8% to approximately 52%** across both frontend and backend codebases.
+Successfully increased test coverage for the RAGPDF AI Company Policy Assistant project from **33.8% to approximately 61%** across both frontend and backend codebases.
 
 ## Results
 
-### Backend Coverage: **48.93%**
-- **Test Suites**: 10 passed  
-- **Tests**: 110 passed
+### Backend Coverage: **69.13%** ⬆️ (was 48.93%)
+- **Test Suites**: 11 passed  
+- **Tests**: 148 passed ⬆️ (was 110)
 - **Status**: ✅ All tests passing
 
 #### Component Breakdown:
@@ -16,6 +16,7 @@ Successfully increased test coverage for the RAGPDF AI Company Policy Assistant 
 | **authController.js** | 97.36% | ✅ Excellent |
 | **authMiddleware.js** | 100% | ✅ Complete |
 | **chatController.js** | 87.83% | ✅ Very Good |
+| **documentController.js** | 94.66% ⬆️ | ✅ Excellent (38 tests) |
 | **ragController.js** | 100% | ✅ Complete |
 | **searchController.js** | 100% | ✅ Complete |
 | **geminiService.js** | 100% | ✅ Complete |
@@ -27,7 +28,6 @@ Successfully increased test coverage for the RAGPDF AI Company Policy Assistant 
 | **Conversation.js (Model)** | 100% | ✅ Complete |
 
 #### Areas Needing Improvement:
-- documentController.js: 0% (complex file upload logic - ~400 lines)
 - Services (chunkService, embeddingService, vectorSearchService, searchService): 0%
 - Routes: 0% (routes are simple wrappers, tested indirectly through controllers)
 
