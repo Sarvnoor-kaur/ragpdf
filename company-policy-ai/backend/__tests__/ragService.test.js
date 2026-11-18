@@ -1,28 +1,32 @@
-import { jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 
-// Mock dependencies before importing the service
-const mockDocument = {
-  find: jest.fn(),
-  findById: jest.fn(),
-};
-
+// Create mock functions
+const mockDocumentFind = jest.fn();
+const mockDocumentFindById = jest.fn();
 const mockGenerateEmbedding = jest.fn();
 const mockGenerateGroundedAnswer = jest.fn();
 const mockSearchSimilarChunks = jest.fn();
 
+// Mock Document model
 jest.unstable_mockModule('../models/Document.js', () => ({
-  default: mockDocument,
+  default: {
+    find: mockDocumentFind,
+    findById: mockDocumentFindById,
+  },
 }));
 
+// Mock Gemini service
 jest.unstable_mockModule('../services/geminiService.js', () => ({
   generateEmbedding: mockGenerateEmbedding,
   generateGroundedAnswer: mockGenerateGroundedAnswer,
 }));
 
+// Mock vector search service
 jest.unstable_mockModule('../services/vectorSearchService.js', () => ({
   searchSimilarChunks: mockSearchSimilarChunks,
 }));
 
+// Import after mocking
 const { generateRAGAnswer } = await import('../services/ragService.js');
 
 describe('RAG Service', () => {
@@ -46,10 +50,17 @@ describe('RAG Service', () => {
           _id: 'chunk1',
         },
       ]);
-      mockDocument.findById.mockResolvedValue({
-        title: 'Leave Policy',
-        originalFileName: 'leave-policy.pdf',
+      
+      // Mock findById with proper chaining
+      mockDocumentFindById.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue({
+            title: 'Leave Policy',
+            originalFileName: 'leave-policy.pdf',
+          }),
+        }),
       });
+      
       mockGenerateGroundedAnswer.mockResolvedValue('Employees get 20 days leave.');
 
       const result = await generateRAGAnswer(question, user);
@@ -69,7 +80,12 @@ describe('RAG Service', () => {
       const user = { role: 'employee', department: 'Marketing' };
       const question = 'What is the policy?';
 
-      mockDocument.find.mockResolvedValue([]);
+      // Mock find with proper chaining
+      mockDocumentFind.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([]),
+        }),
+      });
 
       const result = await generateRAGAnswer(question, user);
 
@@ -83,9 +99,15 @@ describe('RAG Service', () => {
       const user = { role: 'employee', department: 'HR' };
       const question = 'What is the HR policy?';
 
-      mockDocument.find.mockResolvedValue([
-        { _id: 'doc1', title: 'HR Policy', department: 'HR', allowedRoles: ['employee'] },
-      ]);
+      // Mock find with proper chaining
+      mockDocumentFind.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([
+            { _id: 'doc1', title: 'HR Policy', department: 'HR', allowedRoles: ['employee'] },
+          ]),
+        }),
+      });
+      
       mockGenerateEmbedding.mockResolvedValue([0.1, 0.2]);
       mockSearchSimilarChunks.mockResolvedValue([
         {
@@ -97,16 +119,22 @@ describe('RAG Service', () => {
           _id: 'chunk1',
         },
       ]);
-      mockDocument.findById.mockResolvedValue({
-        title: 'HR Policy',
-        originalFileName: 'hr-policy.pdf',
+      
+      mockDocumentFindById.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue({
+            title: 'HR Policy',
+            originalFileName: 'hr-policy.pdf',
+          }),
+        }),
       });
+      
       mockGenerateGroundedAnswer.mockResolvedValue('HR policy details');
 
       const result = await generateRAGAnswer(question, user);
 
       expect(result.answer).toBe('HR policy details');
-      expect(mockDocument.find).toHaveBeenCalledWith({
+      expect(mockDocumentFind).toHaveBeenCalledWith({
         status: 'ready',
         allowedRoles: 'employee',
         $or: [{ department: 'General' }, { department: 'HR' }],
@@ -160,9 +188,25 @@ describe('RAG Service', () => {
           _id: 'chunk2',
         },
       ]);
-      mockDocument.findById
-        .mockResolvedValueOnce({ title: 'Policy 1', originalFileName: 'policy1.pdf' })
-        .mockResolvedValueOnce({ title: 'Policy 2', originalFileName: 'policy2.pdf' });
+      
+      // Mock findById with different responses for each call
+      mockDocumentFindById
+        .mockReturnValueOnce({
+          select: jest.fn().mockReturnValue({
+            lean: jest.fn().mockResolvedValue({ title: 'Policy 1', originalFileName: 'policy1.pdf' }),
+          }),
+        })
+        .mockReturnValueOnce({
+          select: jest.fn().mockReturnValue({
+            lean: jest.fn().mockResolvedValue({ title: 'Policy 1', originalFileName: 'policy1.pdf' }),
+          }),
+        })
+        .mockReturnValueOnce({
+          select: jest.fn().mockReturnValue({
+            lean: jest.fn().mockResolvedValue({ title: 'Policy 2', originalFileName: 'policy2.pdf' }),
+          }),
+        });
+      
       mockGenerateGroundedAnswer.mockResolvedValue('Combined policy information');
 
       const result = await generateRAGAnswer(question, user);

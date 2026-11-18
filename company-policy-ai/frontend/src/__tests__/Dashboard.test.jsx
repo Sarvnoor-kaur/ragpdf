@@ -35,7 +35,11 @@ describe('Dashboard Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Test User/i)).toBeInTheDocument();
+      // Use getAllByText since "Test User" appears in both sidebar and dashboard
+      const userElements = screen.getAllByText(/Test User/i);
+      expect(userElements.length).toBeGreaterThan(0);
+      // Verify greeting is present
+      expect(screen.getByText(/Good morning|Good afternoon|Good evening/i)).toBeInTheDocument();
     });
   });
 
@@ -47,8 +51,12 @@ describe('Dashboard Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/employee/i)).toBeInTheDocument();
-      expect(screen.getByText(/IT/i)).toBeInTheDocument();
+      // Role and department appear multiple times (sidebar and main content)
+      const employeeElements = screen.getAllByText(/employee/i);
+      expect(employeeElements.length).toBeGreaterThan(0);
+
+      const itElements = screen.getAllByText(/IT/i);
+      expect(itElements.length).toBeGreaterThan(0);
     });
   });
 

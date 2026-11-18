@@ -1,14 +1,16 @@
-import { jest } from '@jest/globals';
-import { getOverviewMetrics, getQueryTrends, getDocumentsByDepartment } from '../controllers/analyticsController.js';
-import Document from '../models/Document.js';
-import User from '../models/User.js';
-import Conversation from '../models/Conversation.js';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 
-// Mock the models
+// Create mock functions
+const mockCountDocuments = jest.fn();
+const mockAggregate = jest.fn();
+const mockFind = jest.fn();
+const mockDistinct = jest.fn();
+
+// Mock the models before importing controllers
 jest.unstable_mockModule('../models/Document.js', () => ({
   default: {
-    countDocuments: jest.fn(),
-    aggregate: jest.fn(),
+    countDocuments: mockCountDocuments,
+    aggregate: mockAggregate,
   },
 }));
 
@@ -22,11 +24,17 @@ jest.unstable_mockModule('../models/User.js', () => ({
 jest.unstable_mockModule('../models/Conversation.js', () => ({
   default: {
     countDocuments: jest.fn(),
-    find: jest.fn(),
-    distinct: jest.fn(),
-    aggregate: jest.fn(),
+    find: mockFind,
+    distinct: mockDistinct,
+    aggregate: mockAggregate,
   },
 }));
+
+// Import after mocking
+const { getOverviewMetrics, getQueryTrends, getDocumentsByDepartment } = await import('../controllers/analyticsController.js');
+const Document = (await import('../models/Document.js')).default;
+const User = (await import('../models/User.js')).default;
+const Conversation = (await import('../models/Conversation.js')).default;
 
 describe('Analytics Controller', () => {
   let req, res;
