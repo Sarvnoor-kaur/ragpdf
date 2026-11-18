@@ -8,7 +8,7 @@ import { generateRAGAnswer } from '../services/ragService.js';
  */
 const generateTitleFromQuestion = (question) => {
   if (!question) return 'New Chat';
-  let title = question.trim().replace(/^["']|["']$/g, '');
+  let title = question.trim().replace(/^(["'])|(['"])$/g, '');
   if (title.length > 35) {
     title = title.substring(0, 35).trim() + '...';
   }

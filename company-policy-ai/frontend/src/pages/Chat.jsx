@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   MessageSquare, ArrowLeft, Loader2, AlertCircle, Bot, User, FileText,
-  Plus, Trash2, Menu, X, ChevronRight, Sparkles, Send
+  Plus, Trash2, Menu, X, Sparkles, Send
 } from 'lucide-react';
 import {
   createConversation,

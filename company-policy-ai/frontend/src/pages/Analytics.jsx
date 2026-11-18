@@ -10,7 +10,6 @@ import {
   TrendingDown,
   Activity,
   BarChart3,
-  Calendar,
   RefreshCw,
 } from 'lucide-react';
 import {
@@ -29,6 +28,25 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import * as analyticsService from '../services/analyticsService';
+
+// KPICard component extracted outside
+const KPICard = ({ title, value, icon: Icon, trend, color = 'primaryAccent' }) => (
+  <div className="bg-white border border-border rounded-xl p-6 shadow-sm">
+    <div className="flex items-start justify-between mb-4">
+      <div className={`w-12 h-12 rounded-xl bg-${color}/10 flex items-center justify-center`}>
+        <Icon className={`w-6 h-6 text-${color}`} style={{ color: color === 'primaryAccent' ? '#635BFF' : undefined }} />
+      </div>
+      {trend && (
+        <div className={`flex items-center gap-1 text-sm font-semibold ${trend > 0 ? 'text-success' : 'text-red-600'}`}>
+          {trend > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+          <span>{Math.abs(trend)}%</span>
+        </div>
+      )}
+    </div>
+    <h3 className="text-secondaryText text-sm font-medium mb-2">{title}</h3>
+    <p className="text-3xl font-bold text-primaryText">{value?.toLocaleString() || 0}</p>
+  </div>
+);
 
 const Analytics = () => {
   const { user, logout } = useAuth();
@@ -91,24 +109,6 @@ const Analytics = () => {
       setLoading(false);
     }
   };
-
-  const KPICard = ({ title, value, icon: Icon, trend, color = 'primaryAccent' }) => (
-    <div className="bg-white border border-border rounded-xl p-6 shadow-sm">
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 rounded-xl bg-${color}/10 flex items-center justify-center`}>
-          <Icon className={`w-6 h-6 text-${color}`} style={{ color: color === 'primaryAccent' ? '#635BFF' : undefined }} />
-        </div>
-        {trend && (
-          <div className={`flex items-center gap-1 text-sm font-semibold ${trend > 0 ? 'text-success' : 'text-red-600'}`}>
-            {trend > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-            <span>{Math.abs(trend)}%</span>
-          </div>
-        )}
-      </div>
-      <h3 className="text-secondaryText text-sm font-medium mb-2">{title}</h3>
-      <p className="text-3xl font-bold text-primaryText">{value?.toLocaleString() || 0}</p>
-    </div>
-  );
 
   if (loading) {
     return (
@@ -262,8 +262,8 @@ const Analytics = () => {
                 outerRadius={100}
                 label={(entry) => `${entry._id}: ${entry.count}`}
               >
-                {documentsByDept.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                {documentsByDept.map((entry) => (
+                  <Cell key={`cell-${entry._id}`} fill={COLORS[documentsByDept.indexOf(entry) % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip

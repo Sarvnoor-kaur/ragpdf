@@ -2,13 +2,6 @@ import React from 'react';
 import { ChevronRight, CheckCircle2 } from 'lucide-react';
 
 const DashboardHeader = ({ user }) => {
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
-  };
-
   return (
     <header className="bg-white border-b border-border px-6 py-4 lg:px-8 sticky top-0 z-30">
       <div className="flex items-center justify-between">

@@ -94,11 +94,14 @@ export const getQueryTrends = async (req, res) => {
       : {};
 
     // Aggregate conversations by date
-    const groupByFormat = interval === 'week' 
-      ? { $isoWeek: '$createdAt' }
-      : interval === 'month'
-      ? { $month: '$createdAt' }
-      : { $dayOfMonth: '$createdAt' };
+    let groupByFormat;
+    if (interval === 'week') {
+      groupByFormat = { $isoWeek: '$createdAt' };
+    } else if (interval === 'month') {
+      groupByFormat = { $month: '$createdAt' };
+    } else {
+      groupByFormat = { $dayOfMonth: '$createdAt' };
+    }
 
     const trends = await Conversation.aggregate([
       { $match: matchStage },

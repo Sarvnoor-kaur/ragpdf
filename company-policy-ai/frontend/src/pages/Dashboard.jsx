@@ -3,13 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   User,
-  Mail,
   Shield,
   Building,
   MessageSquare,
   Sparkles,
   ArrowRight,
-  Calendar,
   Lock,
   CheckCircle2,
 } from 'lucide-react';

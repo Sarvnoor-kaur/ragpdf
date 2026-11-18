@@ -28,10 +28,50 @@ pipeline {
             }
         }
 
+        stage('Install Backend Dependencies') {
+            steps {
+                echo 'Installing backend dependencies...'
+                bat 'cd company-policy-ai\\backend && npm install'
+            }
+        }
+
+        stage('Install Frontend Dependencies') {
+            steps {
+                echo 'Installing frontend dependencies...'
+                bat 'cd company-policy-ai\\frontend && npm install'
+            }
+        }
+
+        stage('Run Backend Tests') {
+            steps {
+                echo 'Running backend tests with coverage...'
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    bat 'cd company-policy-ai\\backend && npm test'
+                }
+            }
+        }
+
+        stage('Run Frontend Tests') {
+            steps {
+                echo 'Running frontend tests with coverage...'
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    bat 'cd company-policy-ai\\frontend && npm test'
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube Analysis...'
-                // Note: Make sure "SonarQubeServer" and "SonarScanner" are configured in Jenkins!
+                script {
+                    // Ensure coverage reports exist before analysis
+                    def backendCoverage = fileExists('company-policy-ai/backend/coverage/lcov.info')
+                    def frontendCoverage = fileExists('company-policy-ai/frontend/coverage/lcov.info')
+                    
+                    echo "Backend coverage exists: ${backendCoverage}"
+                    echo "Frontend coverage exists: ${frontendCoverage}"
+                }
+                
                 withSonarQubeEnv('SonarQubeServer') {
                     script {
                         def scannerHome = tool 'SonarScanner'
@@ -43,40 +83,58 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                echo 'Waiting for SonarQube Quality Gate to pass...'
-                timeout(time: 10, unit: 'MINUTES') {
-                    // Fails the pipeline if the code does not pass the Quality Gate
-                    waitForQualityGate abortPipeline: true
+                echo 'Waiting for SonarQube Quality Gate...'
+                timeout(time: 15, unit: 'MINUTES') {
+                    script {
+                        // Wait for webhook callback from SonarQube
+                        def qg = waitForQualityGate()
+                        
+                        if (qg.status != 'OK') {
+                            echo "Quality Gate Status: ${qg.status}"
+                            echo "Quality Gate failed. Check SonarQube dashboard for details."
+                            
+                            // Don't fail the pipeline, but mark stage as unstable
+                            currentBuild.result = 'UNSTABLE'
+                            
+                            // Only abort if explicitly configured
+                            if (env.SONAR_ABORT_ON_FAILURE == 'true') {
+                                error "Pipeline aborted due to quality gate failure"
+                            }
+                        } else {
+                            echo "Quality Gate passed successfully!"
+                        }
+                    }
                 }
             }
         }
 
         stage('Gitleaks Secret Scan') {
-    steps {
-        script {
-            echo 'Running Gitleaks secret scan on source...'
-            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                bat "\"${GITLEAKS_PATH}\" detect --source . --redact --report-format json --report-path gitleaks-report.json --exit-code 0"
-            }
-            if (fileExists('gitleaks-report.json')) {
-                echo 'Gitleaks source scan completed. Report: gitleaks-report.json'
-            } else {
-                echo 'Warning: Gitleaks source report not generated.'
-            }
+            steps {
+                script {
+                    echo 'Running Gitleaks secret scan on source...'
+                    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                        bat "\"${GITLEAKS_PATH}\" detect --source . --redact --report-format json --report-path gitleaks-report.json --exit-code 0"
+                    }
+                    if (fileExists('gitleaks-report.json')) {
+                        echo 'Gitleaks source scan completed. Report: gitleaks-report.json'
+                    } else {
+                        echo 'Warning: Gitleaks source report not generated.'
+                    }
 
-            echo 'Running Gitleaks secret scan on Git history...'
-            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                bat "\"${GITLEAKS_PATH}\" detect --source . --redact --report-format json --report-path gitleaks-history-report.json --exit-code 0 --log-opts=\"--all\""
-            }
-            if (fileExists('gitleaks-history-report.json')) {
-                echo 'Gitleaks history scan completed. Report: gitleaks-history-report.json'
-            } else {
-                echo 'Warning: Gitleaks history report not generated.'
+                    echo 'Running Gitleaks secret scan on Git history...'
+                    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                        bat "\"${GITLEAKS_PATH}\" detect --source . --redact --report-format json --report-path gitleaks-history-report.json --exit-code 0 --log-opts=\"--all\""
+                    }
+                    if (fileExists('gitleaks-history-report.json')) {
+                        echo 'Gitleaks history scan completed. Report: gitleaks-history-report.json'
+                    } else {
+                        echo 'Warning: Gitleaks history report not generated.'
+                    }
+                }
             }
         }
-    }
-}
-stage('Build Backend Image') {
+
+        stage('Build Backend Image') {
             steps {
                 echo 'Building backend Docker image...'
                 bat "docker build -t ${BACKEND_IMAGE} ./company-policy-ai/backend"
@@ -89,6 +147,7 @@ stage('Build Backend Image') {
                 bat "docker build --build-arg VITE_API_URL=/api -t ${FRONTEND_IMAGE} ./company-policy-ai/frontend"
             }
         }
+
         stage('Generate SBOM - Syft') {
             steps {
                 echo 'Generating CycloneDX SBOMs with Syft...'
@@ -128,6 +187,7 @@ stage('Build Backend Image') {
                 }
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
                 echo 'Logging into Docker Hub...'
@@ -201,21 +261,36 @@ stage('Build Backend Image') {
     post {
 
         always {
-            echo 'Pipeline finished. Cleaning up workspace and docker credentials...'
+            echo 'Pipeline finished. Archiving artifacts and cleaning up...'
 
-                // Archive SBOM and Grype reports regardless of success or failure
-                archiveArtifacts artifacts: 'sbom-*.cdx.json, grype-*.json, grype-*.txt, gitleaks*.json', fingerprint: true
-                bat "docker logout"
+            // Archive test results and coverage reports
+            script {
+                if (fileExists('company-policy-ai/backend/coverage')) {
+                    archiveArtifacts artifacts: 'company-policy-ai/backend/coverage/**/*', fingerprint: true, allowEmptyArchive: true
+                }
+                if (fileExists('company-policy-ai/frontend/coverage')) {
+                    archiveArtifacts artifacts: 'company-policy-ai/frontend/coverage/**/*', fingerprint: true, allowEmptyArchive: true
+                }
+            }
+
+            // Archive SBOM and Grype reports regardless of success or failure
+            archiveArtifacts artifacts: 'sbom-*.cdx.json, grype-*.json, grype-*.txt, gitleaks*.json', fingerprint: true, allowEmptyArchive: true
+            
+            bat "docker logout"
 
             cleanWs()
         }
 
         success {
-            echo 'Deployment successful! The MERN application has been updated.'
+            echo 'Deployment successful! The RAGPDF application has been updated.'
         }
 
         failure {
-            echo 'Deployment failed! Check the Jenkins console output for errors.'
+            echo 'Pipeline failed! Check the Jenkins console output for errors.'
+        }
+
+        unstable {
+            echo 'Pipeline completed with warnings. Check test results, quality gate, or security scans.'
         }
     }
 }

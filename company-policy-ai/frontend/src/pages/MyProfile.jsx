@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import {
   User,
   Mail,
@@ -18,6 +19,8 @@ const MyProfile = () => {
   const { user, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -30,21 +33,41 @@ const MyProfile = () => {
       ...prev,
       [name]: value,
     }));
+    // Clear messages when user starts typing
+    setError('');
+    setSuccess('');
   };
 
   const handleSave = async () => {
     setIsSaving(true);
+    setError('');
+    setSuccess('');
 
-    // Simulate API call
-    setTimeout(() => {
-      // TODO: Implement actual API call to update user profile
-      console.log('Saving profile:', formData);
+    try {
+      const response = await api.put('/auth/profile', {
+        name: formData.name,
+        email: formData.email,
+        department: formData.department,
+      });
+
+      if (response.data.success) {
+        setSuccess('Profile updated successfully!');
+        setIsEditing(false);
+
+        // Update user in context if API provides updated user
+        if (response.data.user) {
+          // Note: This would require updating the AuthContext to expose a setUser function
+          console.log('Profile updated:', response.data.user);
+        }
+      } else {
+        setError(response.data.message || 'Failed to update profile');
+      }
+    } catch (err) {
+      console.error('Profile update error:', err);
+      setError(err.response?.data?.message || 'Failed to update profile. Please try again.');
+    } finally {
       setIsSaving(false);
-      setIsEditing(false);
-
-      // Show success message
-      alert('Profile updated successfully!');
-    }, 1000);
+    }
   };
 
   const handleCancel = () => {
@@ -54,6 +77,8 @@ const MyProfile = () => {
       department: user?.department || '',
     });
     setIsEditing(false);
+    setError('');
+    setSuccess('');
   };
 
   return (
@@ -65,6 +90,20 @@ const MyProfile = () => {
           View and manage your account information and preferences.
         </p>
       </div>
+
+      {/* Success/Error Messages */}
+      {success && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-success">
+          <CheckCircle2 className="w-5 h-5" />
+          <span className="text-sm font-medium">{success}</span>
+        </div>
+      )}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
+          <X className="w-5 h-5" />
+          <span className="text-sm font-medium">{error}</span>
+        </div>
+      )}
 
       {/* Profile Card */}
       <div className="bg-white border border-border rounded-xl p-6 shadow-sm mb-6">

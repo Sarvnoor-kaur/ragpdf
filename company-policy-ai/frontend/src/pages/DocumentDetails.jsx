@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft, FileText, Building, Shield, Calendar, Hash,
-  Layers, CheckCircle2, AlertCircle, Loader2, Cpu, LogOut,
+  Layers, AlertCircle, Loader2, Cpu, LogOut,
   ChevronRight, BookOpen,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -18,12 +18,12 @@ const fmtSize = (bytes) => {
 const fmtDate = (iso) =>
   iso
     ? new Date(iso).toLocaleDateString('en-IN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
     : '—';
 
 const STATUS_COLORS = {

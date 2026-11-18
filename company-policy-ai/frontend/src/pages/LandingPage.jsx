@@ -5,7 +5,7 @@ import {
   Brain, Menu, X, ArrowRight, ChevronDown, Bot, FileText, Search,
   Shield, MessageSquare, Zap, CheckCircle, Lock, Users, Building,
   BookOpen, Star, Database, Cpu, ChevronRight, BarChart3, Clock,
-  GitBranch, Award, FlaskConical, LayoutGrid
+  GitBranch, FlaskConical, LayoutGrid
 } from 'lucide-react';
 
 // ─── Utility hook: intersection observer for scroll-in animations ────────────
@@ -44,11 +44,10 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 border-b border-slate-800/70 transition-all duration-300 ${
-        scrolled
-          ? 'bg-[#0b0f19]/98 backdrop-blur-md shadow-lg shadow-black/30'
-          : 'bg-[#0b0f19]/90 backdrop-blur-sm'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 border-b border-slate-800/70 transition-all duration-300 ${scrolled
+        ? 'bg-[#0b0f19]/98 backdrop-blur-md shadow-lg shadow-black/30'
+        : 'bg-[#0b0f19]/90 backdrop-blur-sm'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
@@ -345,9 +344,8 @@ const TrustBar = () => {
           {items.map(({ icon: Icon, label, desc }, i) => (
             <div
               key={label}
-              className={`flex flex-col items-center text-center p-5 rounded-2xl border border-slate-800/60 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-800/40 transition-all duration-300 ${
-                inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-              }`}
+              className={`flex flex-col items-center text-center p-5 rounded-2xl border border-slate-800/60 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-800/40 transition-all duration-300 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                }`}
               style={{ transitionDelay: `${i * 80}ms` }}
             >
               <div className="w-10 h-10 bg-accentIndigo/10 rounded-xl flex items-center justify-center mb-3">
@@ -401,9 +399,8 @@ const ProblemSection = () => {
           {problems.map(({ icon: Icon, title, desc }, i) => (
             <div
               key={title}
-              className={`relative p-6 rounded-2xl border border-slate-800 bg-slate-900/40 hover:border-red-500/20 hover:bg-slate-900/70 transition-all duration-300 group ${
-                inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
+              className={`relative p-6 rounded-2xl border border-slate-800 bg-slate-900/40 hover:border-red-500/20 hover:bg-slate-900/70 transition-all duration-300 group ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
               style={{ transitionDelay: `${i * 120}ms` }}
             >
               <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-red-500/15 transition-colors">
@@ -457,9 +454,8 @@ const HowItWorks = () => {
           {steps.map(({ num, icon: Icon, label, title, desc }, i) => (
             <div
               key={num}
-              className={`relative p-6 rounded-2xl border border-slate-800 bg-slate-900/50 hover:border-accentIndigo/30 hover:bg-slate-900/80 transition-all duration-300 group ${
-                inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
+              className={`relative p-6 rounded-2xl border border-slate-800 bg-slate-900/50 hover:border-accentIndigo/30 hover:bg-slate-900/80 transition-all duration-300 group ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
               style={{ transitionDelay: `${i * 100}ms` }}
             >
               <span className="text-5xl font-extrabold text-slate-800/80 font-display absolute top-4 right-5 leading-none group-hover:text-accentIndigo/20 transition-colors">
@@ -596,11 +592,10 @@ const SecuritySection = () => {
                 ].map(({ label, dept, allowed }) => (
                   <div
                     key={label}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border text-xs transition-colors ${
-                      allowed
-                        ? 'bg-emerald-500/8 border-emerald-500/25 text-emerald-300'
-                        : 'bg-slate-800/30 border-slate-700/40 text-slate-600'
-                    }`}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border text-xs transition-colors ${allowed
+                      ? 'bg-emerald-500/8 border-emerald-500/25 text-emerald-300'
+                      : 'bg-slate-800/30 border-slate-700/40 text-slate-600'
+                      }`}
                   >
                     <span className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${allowed ? 'bg-emerald-500/20' : 'bg-slate-800'}`}>
                       {allowed ? '✓' : '✕'}
@@ -656,9 +651,8 @@ const Features = () => {
           {features.map(({ icon: Icon, title, desc }, i) => (
             <div
               key={title}
-              className={`p-5 rounded-2xl border border-slate-800 bg-slate-900/40 hover:border-accentIndigo/30 hover:bg-slate-800/50 transition-all duration-300 group cursor-default ${
-                inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
+              className={`p-5 rounded-2xl border border-slate-800 bg-slate-900/40 hover:border-accentIndigo/30 hover:bg-slate-800/50 transition-all duration-300 group cursor-default ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
               style={{ transitionDelay: `${i * 60}ms` }}
             >
               <div className="w-10 h-10 bg-accentIndigo/10 group-hover:bg-accentIndigo/15 rounded-xl flex items-center justify-center mb-4 transition-colors">
@@ -723,9 +717,8 @@ const UseCases = () => {
           {cases.map(({ icon: Icon, dept, color, iconBg, iconColor, desc }, i) => (
             <div
               key={dept}
-              className={`p-6 rounded-2xl border bg-gradient-to-br ${color} transition-all duration-300 group cursor-default ${
-                inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
+              className={`p-6 rounded-2xl border bg-gradient-to-br ${color} transition-all duration-300 group cursor-default ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
               style={{ transitionDelay: `${i * 100}ms` }}
             >
               <div className={`w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center mb-4`}>
@@ -764,8 +757,8 @@ const AnswerDemo = () => {
             </div>
             <div className="mt-4 space-y-2">
               <p className="text-[10px] text-slate-600 font-semibold uppercase tracking-widest">Processing</p>
-              {['Generating embedding...', 'Searching 12 documents...', 'Found 2 relevant chunks', 'Generating answer...'].map((step, i) => (
-                <div key={i} className="flex items-center gap-2">
+              {['Generating embedding...', 'Searching 12 documents...', 'Found 2 relevant chunks', 'Generating answer...'].map((step) => (
+                <div key={step} className="flex items-center gap-2">
                   <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                   <span className="text-slate-500 text-xs">{step}</span>
                 </div>
