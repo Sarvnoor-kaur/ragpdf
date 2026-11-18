@@ -344,10 +344,12 @@ const Chat = () => {
           {activeConversation?.messages?.map((msg, idx) => {
             const isUser = msg.role === 'user';
             const uniqueSources = deduplicateSources(msg.sources);
+            // Create a stable key using message index and first few chars of content
+            const messageKey = `msg-${idx}-${msg.content.substring(0, 20)}`;
 
             return (
               <div
-                key={idx}
+                key={messageKey}
                 className={`flex items-start gap-3.5 max-w-3xl mx-auto ${isUser ? 'justify-end' : 'justify-start'
                   }`}
               >
@@ -372,16 +374,20 @@ const Chat = () => {
                         <FileText className="w-3.5 h-3.5 text-primaryAccent" /> Sources
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {uniqueSources.map((src, sIdx) => (
-                          <div
-                            key={sIdx}
-                            className="flex items-center gap-1.5 bg-mainBg border border-border px-2.5 py-1 rounded-lg text-xs font-medium text-primaryText"
-                          >
-                            <FileText className="w-3 h-3 text-secondaryText" />
-                            <span>{src.documentName}</span>
-                            <span className="text-secondaryText font-normal">• Page {src.page}</span>
-                          </div>
-                        ))}
+                        {uniqueSources.map((src) => {
+                          // Use stable unique key from documentId, chunkId and page
+                          const sourceKey = `${src.documentId}-${src.chunkId || src.page || 0}`;
+                          return (
+                            <div
+                              key={sourceKey}
+                              className="flex items-center gap-1.5 bg-mainBg border border-border px-2.5 py-1 rounded-lg text-xs font-medium text-primaryText"
+                            >
+                              <FileText className="w-3 h-3 text-secondaryText" />
+                              <span>{src.documentName}</span>
+                              <span className="text-secondaryText font-normal">• Page {src.page}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

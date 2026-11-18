@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Upload, FileText, Trash2, Eye, AlertCircle, CheckCircle2,
-  Loader2, Building, FolderOpen, Cpu, LogOut, X, ChevronRight, Zap, RefreshCw
+  Loader2, Building, FolderOpen, Cpu, LogOut, X, Zap, RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { uploadDocument, getDocuments, deleteDocument, generateEmbeddings } from '../services/documentService';
@@ -523,19 +523,20 @@ const AdminDocuments = () => {
                               id={`embed-doc-${docId}`}
                               onClick={() => handleGenerateEmbeddings(docId)}
                               disabled={embeddingDocId === docId || doc.status === 'ready'}
-                              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${
-                                doc.status === 'ready' 
-                                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' 
+                              className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${doc.status === 'ready'
+                                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
                                   : 'bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 cursor-pointer'
-                              }`}
+                                }`}
                             >
-                              {embeddingDocId === docId ? (
-                                <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Generating...</>
-                              ) : doc.status === 'ready' ? (
-                                <><CheckCircle2 className="w-3.5 h-3.5" /> Ready</>
-                              ) : (
-                                <><Zap className="w-3.5 h-3.5" /> Embed</>
-                              )}
+                              {(() => {
+                                if (embeddingDocId === docId) {
+                                  return <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Generating...</>;
+                                }
+                                if (doc.status === 'ready') {
+                                  return <><CheckCircle2 className="w-3.5 h-3.5" /> Ready</>;
+                                }
+                                return <><Zap className="w-3.5 h-3.5" /> Embed</>;
+                              })()}
                             </button>
                             <button
                               id={`view-doc-${docId}`}
