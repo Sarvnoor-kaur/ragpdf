@@ -1,0 +1,163 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Prometheus Configuration for RAGPDF Monitoring
+#
+# This configuration scrapes metrics from:
+#   1. Prometheus itself (self-monitoring)
+#   2. EC2 Node Exporter (system metrics: CPU, RAM, disk, network)
+#   3. K3s kube-state-metrics (Kubernetes object state)
+#   4. K3s metrics-server (if exposed)
+#   5. RAGPDF backend application (if /metrics endpoint exists)
+#
+# IMPORTANT: Replace 13.205.64.224 with your actual EC2 instance IP
+# ═══════════════════════════════════════════════════════════════════════════
+
+global:
+  scrape_interval: 15s       # Scrape targets every 15 seconds
+  evaluation_interval: 15s   # Evaluate alerting rules every 15 seconds
+  scrape_timeout: 10s        # Timeout after 10 seconds
+  
+  external_labels:
+    cluster: 'ragpdf-k3s'
+    environment: 'production'
+    project: 'ragpdf'
+
+# ── Alerting Configuration ─────────────────────────────────────────────────
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+          # Add Alertmanager targets here when implementing alerting
+          # Example: ['localhost:9093']
+
+# ── Alert Rules ────────────────────────────────────────────────────────────
+rule_files:
+  - 'alerts.yml'
+
+# ── Scrape Configurations ──────────────────────────────────────────────────
+scrape_configs:
+
+  # ── Prometheus Self-Monitoring ───────────────────────────────────────────
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+          instance: 'local'
+
+  # ── EC2 Node Exporter (System Metrics) ───────────────────────────────────
+  # Collects: CPU, RAM, disk, network, file descriptors, load average
+  # 
+  # SETUP REQUIRED:
+  #   1. Install Node Exporter on EC2 (see README.md)
+  #   2. Replace 13.205.64.224 below with your actual EC2 IP from terraform output
+  #   3. Ensure port 9100 is open in EC2 security group (see terraform updates)
+  - job_name: 'ec2-node-exporter'
+    static_configs:
+      - targets: ['13.205.64.224:9100']
+        labels:
+          service: 'node-exporter'
+          instance: 'ragpdf-k3s-ec2'
+          role: 'k3s-node'
+    
+    # Relabel to use instance name instead of IP:port
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: '13.205.64.224:9100'
+
+  # ── Kube-State-Metrics (Kubernetes Object State) ─────────────────────────
+  # Collects: Pod status, deployment replicas, node conditions, etc.
+  # 
+  # SETUP REQUIRED:
+  #   1. Deploy kube-state-metrics on K3s (see README.md)
+  #   2. Replace 13.205.64.224 below with your actual EC2 IP
+  #   3. Ensure port 30001 (NodePort) is open in security group
+  - job_name: 'kube-state-metrics'
+    static_configs:
+      - targets: ['13.205.64.224:30001']
+        labels:
+          service: 'kube-state-metrics'
+          instance: 'ragpdf-k3s'
+    
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'ragpdf-k3s'
+
+  # ── K3s Metrics Server (Container Resource Metrics) ──────────────────────
+  # Collects: Container CPU/memory usage
+  # 
+  # NOTE: K3s metrics-server is typically internal only
+  # If you expose it via NodePort, uncomment this section
+  #
+  # - job_name: 'k3s-metrics-server'
+  #   static_configs:
+  #     - targets: ['13.205.64.224:30002']
+  #       labels:
+  #         service: 'metrics-server'
+  #         instance: 'ragpdf-k3s'
+
+  # ── K3s Kubelet Metrics (Node-level) ─────────────────────────────────────
+  # Collects: Kubelet stats, cAdvisor container metrics
+  # 
+  # SETUP REQUIRED:
+  #   1. Ensure Kubelet metrics are exposed (default port 10250)
+  #   2. May require authentication token
+  #   3. Replace 13.205.64.224 below
+  #
+  # - job_name: 'k3s-kubelet'
+  #   scheme: https
+  #   tls_config:
+  #     insecure_skip_verify: true
+  #   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+  #   static_configs:
+  #     - targets: ['13.205.64.224:10250']
+  #       labels:
+  #         service: 'kubelet'
+  #         instance: 'ragpdf-k3s'
+
+  # ── RAGPDF Backend Application Metrics ───────────────────────────────────
+  # If you add a /metrics endpoint to your Node.js backend
+  # 
+  # SETUP REQUIRED:
+  #   1. Install prom-client in backend: npm install prom-client
+  #   2. Add /metrics endpoint to Express app
+  #   3. Replace 13.205.64.224 and verify port (typically 80 via Ingress)
+  #
+  # - job_name: 'ragpdf-backend'
+  #   static_configs:
+  #     - targets: ['13.205.64.224:80']
+  #       labels:
+  #         service: 'ragpdf-backend'
+  #         instance: 'ragpdf-app'
+  #   metrics_path: '/api/metrics'
+
+  # ── RAGPDF Frontend Metrics (Optional) ───────────────────────────────────
+  # If you add metrics to your React frontend
+  #
+  # - job_name: 'ragpdf-frontend'
+  #   static_configs:
+  #     - targets: ['13.205.64.224:80']
+  #       labels:
+  #         service: 'ragpdf-frontend'
+  #         instance: 'ragpdf-app'
+  #   metrics_path: '/metrics'
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Configuration Tips:
+#
+# 1. To reload configuration without restarting:
+#    curl -X POST http://localhost:9090/-/reload
+#
+# 2. To check configuration validity:
+#    docker exec ragpdf-prometheus promtool check config /etc/prometheus/prometheus.yml
+#
+# 3. To view active targets:
+#    Open http://localhost:9090/targets in browser
+#
+# 4. To view service discovery:
+#    Open http://localhost:9090/service-discovery in browser
+# ═══════════════════════════════════════════════════════════════════════════

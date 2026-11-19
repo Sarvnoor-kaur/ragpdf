@@ -1,0 +1,267 @@
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Prometheus Alert Rules for RAGPDF Monitoring
+#
+# Alert severity levels:
+#   - critical: Immediate action required, service down
+#   - warning: Attention needed, potential issues
+#   - info: Informational, no action needed
+# ═══════════════════════════════════════════════════════════════════════════
+
+groups:
+
+  # ── EC2 Instance Alerts ──────────────────────────────────────────────────
+  - name: ec2_alerts
+    interval: 30s
+    rules:
+
+      # EC2 instance is down or unreachable
+      - alert: EC2InstanceDown
+        expr: up{job="ec2-node-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "EC2 instance {{ $labels.instance }} is down"
+          description: "The EC2 K3s node has been unreachable for more than 2 minutes. Node Exporter is not responding."
+          action: "1. Check EC2 instance status in AWS Console\n2. Verify security group allows port 9100\n3. SSH to EC2 and check: systemctl status node_exporter"
+
+      # High CPU usage on EC2
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle",job="ec2-node-exporter"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanize }}% for more than 5 minutes."
+          action: "1. Check top processes: ssh to EC2 and run 'top'\n2. Review K3s pod resource usage\n3. Consider scaling or optimizing workloads"
+
+      # Critical CPU usage
+      - alert: CriticalCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle",job="ec2-node-exporter"}[5m])) * 100) > 95
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "CRITICAL: CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanize }}%. System may become unresponsive."
+          action: "IMMEDIATE: SSH to EC2 and identify CPU-hogging processes with 'top' or 'htop'"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes{job="ec2-node-exporter"} / node_memory_MemTotal_bytes{job="ec2-node-exporter"})) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value | humanize }}% for more than 5 minutes."
+          action: "1. Check memory consumers: ssh and run 'free -h' and 'ps aux --sort=-%mem | head'\n2. Review pod memory limits\n3. Consider increasing instance size"
+
+      # Critical memory usage
+      - alert: CriticalMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes{job="ec2-node-exporter"} / node_memory_MemTotal_bytes{job="ec2-node-exporter"})) * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "CRITICAL: Memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value | humanize }}%. Risk of OOM killer."
+          action: "IMMEDIATE: SSH to EC2 and free up memory or restart non-critical services"
+
+      # Low disk space
+      - alert: LowDiskSpace
+        expr: (1 - (node_filesystem_avail_bytes{job="ec2-node-exporter",mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{job="ec2-node-exporter",mountpoint="/"})) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Root filesystem usage is {{ $value | humanize }}%."
+          action: "1. Check disk usage: ssh and run 'df -h' and 'du -sh /*'\n2. Clean Docker images: 'docker system prune -a'\n3. Clean K3s: 'sudo k3s crictl rmi --prune'\n4. Review logs in /var/log"
+
+      # Critical disk space
+      - alert: CriticalDiskSpace
+        expr: (1 - (node_filesystem_avail_bytes{job="ec2-node-exporter",mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{job="ec2-node-exporter",mountpoint="/"})) * 100 > 90
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "CRITICAL: Disk space on {{ $labels.instance }}"
+          description: "Root filesystem usage is {{ $value | humanize }}%. Risk of system failure."
+          action: "IMMEDIATE: Clean up disk space urgently or increase EBS volume size"
+
+      # High network errors
+      - alert: HighNetworkErrors
+        expr: rate(node_network_receive_errs_total{job="ec2-node-exporter"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High network errors on {{ $labels.instance }}"
+          description: "Network interface {{ $labels.device }} is experiencing {{ $value | humanize }} receive errors/sec."
+          action: "Check network connectivity and AWS network status"
+
+      # High system load
+      - alert: HighSystemLoad
+        expr: node_load15{job="ec2-node-exporter"} / count(node_cpu_seconds_total{mode="idle",job="ec2-node-exporter"}) without(cpu,mode) > 2
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High system load on {{ $labels.instance }}"
+          description: "15-minute load average is {{ $value | humanize }} (per CPU core)."
+          action: "Check running processes and system performance"
+
+  # ── Kubernetes Cluster Alerts ───────────────────────────────────────────
+  - name: kubernetes_alerts
+    interval: 30s
+    rules:
+
+      # Kube-state-metrics is down
+      - alert: KubeStateMetricsDown
+        expr: up{job="kube-state-metrics"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          component: monitoring
+        annotations:
+          summary: "Kube-state-metrics is down"
+          description: "Cannot collect Kubernetes object state metrics."
+          action: "SSH to EC2 and check: kubectl get pods -n kube-system | grep kube-state-metrics"
+
+      # Pod is crash looping
+      - alert: PodCrashLooping
+        expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+        for: 5m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is crash looping"
+          description: "Pod has restarted {{ $value | humanize }} times in the last 15 minutes."
+          action: "1. Check pod logs: kubectl logs -n {{ $labels.namespace }} {{ $labels.pod }}\n2. Describe pod: kubectl describe pod -n {{ $labels.namespace }} {{ $labels.pod }}\n3. Check events: kubectl get events -n {{ $labels.namespace }}"
+
+      # Pod not ready
+      - alert: PodNotReady
+        expr: kube_pod_status_phase{phase!="Running",phase!="Succeeded"} == 1
+        for: 10m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} not ready"
+          description: "Pod is in {{ $labels.phase }} phase for more than 10 minutes."
+          action: "Check pod status: kubectl get pod -n {{ $labels.namespace }} {{ $labels.pod }} -o wide"
+
+      # Deployment has no available replicas
+      - alert: DeploymentReplicasUnavailable
+        expr: kube_deployment_status_replicas_available == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has no available replicas"
+          description: "All replicas are unavailable. Service is DOWN."
+          action: "IMMEDIATE:\n1. Check deployment: kubectl get deployment -n {{ $labels.namespace }} {{ $labels.deployment }}\n2. Check pods: kubectl get pods -n {{ $labels.namespace }}\n3. Check events: kubectl get events -n {{ $labels.namespace }}"
+
+      # Deployment replicas mismatch
+      - alert: DeploymentReplicasMismatch
+        expr: kube_deployment_spec_replicas != kube_deployment_status_replicas_available
+        for: 10m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "Deployment {{ $labels.namespace }}/{{ $labels.deployment }} replica mismatch"
+          description: "Desired replicas: {{ $value }}. Available replicas are lower than desired."
+          action: "Check why replicas are not scaling: kubectl describe deployment -n {{ $labels.namespace }} {{ $labels.deployment }}"
+
+      # StatefulSet replicas unavailable
+      - alert: StatefulSetReplicasUnavailable
+        expr: kube_statefulset_status_replicas_ready != kube_statefulset_status_replicas
+        for: 10m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} replicas not ready"
+          description: "Ready replicas: {{ $value }}. Desired replicas are different from ready replicas."
+          action: "Check StatefulSet: kubectl get statefulset -n {{ $labels.namespace }} {{ $labels.statefulset }}"
+
+      # Container restarted recently
+      - alert: ContainerRestarted
+        expr: increase(kube_pod_container_status_restarts_total[1h]) > 0
+        for: 1m
+        labels:
+          severity: info
+          component: application
+        annotations:
+          summary: "Container {{ $labels.namespace }}/{{ $labels.pod }}/{{ $labels.container }} restarted"
+          description: "Container has restarted {{ $value | humanize }} times in the last hour."
+          action: "Review logs to identify restart cause: kubectl logs -n {{ $labels.namespace }} {{ $labels.pod }} -c {{ $labels.container }} --previous"
+
+      # Node not ready
+      - alert: KubernetesNodeNotReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Kubernetes node {{ $labels.node }} not ready"
+          description: "Node is not in Ready state for more than 5 minutes."
+          action: "IMMEDIATE: Check node status and K3s service:\n1. kubectl get nodes\n2. SSH to EC2: systemctl status k3s"
+
+  # ── Prometheus Self-Monitoring ───────────────────────────────────────────
+  - name: prometheus_alerts
+    interval: 30s
+    rules:
+
+      # Prometheus scrape failures
+      - alert: PrometheusScrapeFailure
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: warning
+          component: monitoring
+        annotations:
+          summary: "Prometheus cannot scrape {{ $labels.job }}"
+          description: "Target {{ $labels.instance }} has been down for more than 5 minutes."
+          action: "1. Check target availability\n2. Verify network connectivity\n3. Check security group rules\n4. Review Prometheus targets: http://localhost:9090/targets"
+
+      # Prometheus high scrape duration
+      - alert: PrometheusHighScrapeDuration
+        expr: scrape_duration_seconds > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: monitoring
+        annotations:
+          summary: "High scrape duration for {{ $labels.job }}"
+          description: "Scraping {{ $labels.instance }} takes {{ $value | humanize }} seconds."
+          action: "Check target performance and network latency"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Alert Testing:
+#
+# 1. Check if alerts are loaded:
+#    curl http://localhost:9090/api/v1/rules
+#
+# 2. View active alerts:
+#    http://localhost:9090/alerts
+#
+# 3. Reload alert rules without restart:
+#    curl -X POST http://localhost:9090/-/reload
+# ═══════════════════════════════════════════════════════════════════════════

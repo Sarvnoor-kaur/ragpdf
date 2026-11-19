@@ -1,0 +1,42 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Grafana Datasource Provisioning - Prometheus
+#
+# This file automatically configures Prometheus as a datasource when Grafana starts
+# No manual configuration needed in the Grafana UI
+# ═══════════════════════════════════════════════════════════════════════════
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    
+    # Prometheus URL (within Docker network)
+    url: http://prometheus:9090
+    
+    # Make this the default datasource
+    isDefault: true
+    
+    # Enable for alerting
+    jsonData:
+      httpMethod: POST
+      timeInterval: 15s
+      
+      # Query timeout
+      queryTimeout: 60s
+      
+      # Exemplars configuration
+      exemplarTraceIdDestinations:
+        - name: trace_id
+          datasourceUid: tempo
+    
+    # No authentication required for internal Docker network
+    basicAuth: false
+    withCredentials: false
+    
+    # Read-only access (recommended)
+    editable: false
+    
+    # Version
+    version: 1

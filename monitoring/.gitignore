@@ -1,0 +1,20 @@
+# Monitoring - Git Ignore
+
+# Docker volumes data
+prometheus-data/
+grafana-data/
+
+# Grafana
+grafana/data/
+grafana/plugins/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

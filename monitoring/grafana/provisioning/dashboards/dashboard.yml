@@ -1,0 +1,30 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Grafana Dashboard Provisioning
+#
+# This file tells Grafana where to find dashboard JSON files
+# Dashboards will be automatically imported on startup
+# ═══════════════════════════════════════════════════════════════════════════
+
+apiVersion: 1
+
+providers:
+  - name: 'RAGPDF Dashboards'
+    orgId: 1
+    folder: 'RAGPDF Monitoring'
+    type: file
+    
+    # Disable dashboard deletion from UI (optional)
+    disableDeletion: false
+    
+    # Update existing dashboards from file (recommended)
+    updateIntervalSeconds: 30
+    
+    # Allow editing in UI
+    allowUiUpdates: true
+    
+    options:
+      # Path to dashboard files (inside container)
+      path: /var/lib/grafana/dashboards
+      
+      # Folder in Grafana to store dashboards
+      foldersFromFilesStructure: true

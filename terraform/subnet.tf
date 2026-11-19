@@ -22,3 +22,5 @@ resource "aws_subnet" "public" {
     Project = var.project
   }
 }
+
+

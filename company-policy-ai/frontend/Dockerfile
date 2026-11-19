@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm ci    
 
 # Copy the rest of the source code
 COPY . .
@@ -13,6 +13,7 @@ COPY . .
 # Build the frontend (Vite)
 # ARG is used so we can pass VITE_API_URL during docker build/compose
 ARG VITE_API_URL
+# build argument hai ye use hota hai to define the variables that can be passed to docker image during the image building process(pass the dynamic values to the docker file during the image building)
 ENV VITE_API_URL=$VITE_API_URL
 # docker build --build-arg VITE_API_URL=/api -t sarvnoorkaur/ragpdf-frontend:latest ./company-policy-ai/frontend
 RUN npm run build

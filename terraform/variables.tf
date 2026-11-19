@@ -74,3 +74,6 @@ variable "project" {
   type        = string
   default     = "ragpdf"
 }
+
+
+#Simple definition: Variables in Terraform are used to store reusable and configurable input values that can be passed to infrastructure resources without hardcoding values everywhere.

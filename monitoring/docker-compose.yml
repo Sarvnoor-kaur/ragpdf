@@ -1,0 +1,122 @@
+version: '3.8'
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RAGPDF Monitoring Stack - Docker Compose
+# 
+# Components:
+#   - Prometheus: Metrics collection and storage
+#   - Grafana: Visualization dashboards
+#
+# This stack runs locally on Windows and monitors remote EC2 K3s infrastructure
+# ═══════════════════════════════════════════════════════════════════════════
+
+services:
+  # ── Prometheus ─────────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ragpdf-prometheus
+    hostname: prometheus
+    restart: unless-stopped
+    
+    # Prometheus configuration
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'  # Keep metrics for 30 days
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'  # Enable reload via HTTP POST
+    
+    ports:
+      - "9090:9090"  # Prometheus UI
+    
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    
+    networks:
+      - monitoring
+    
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    labels:
+      com.ragpdf.monitoring: "prometheus"
+      com.ragpdf.description: "Metrics collection and alerting"
+
+  # ── Grafana ────────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ragpdf-grafana
+    hostname: grafana
+    restart: unless-stopped
+    
+    ports:
+      - "3000:3000"  # Grafana UI
+    
+    environment:
+      # Admin credentials
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=ragpdf123  # CHANGE THIS IN PRODUCTION
+      
+      # Server settings
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      - GF_SERVER_DOMAIN=localhost
+      
+      # Anonymous access (disable in production)
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      
+      # Install plugins
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel
+      
+      # Disable telemetry
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+    
+    volumes:
+      # Provisioning - auto-configure datasources and dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      
+      # Persistent storage
+      - grafana-data:/var/lib/grafana
+    
+    networks:
+      - monitoring
+    
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    labels:
+      com.ragpdf.monitoring: "grafana"
+      com.ragpdf.description: "Metrics visualization and dashboards"
+
+# ── Networks ───────────────────────────────────────────────────────────────
+networks:
+  monitoring:
+    name: ragpdf-monitoring
+    driver: bridge
+
+# ── Volumes ────────────────────────────────────────────────────────────────
+volumes:
+  prometheus-data:
+    name: ragpdf-prometheus-data
+    driver: local
+  
+  grafana-data:
+    name: ragpdf-grafana-data
+    driver: local

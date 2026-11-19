@@ -61,6 +61,28 @@ resource "aws_security_group" "k3s" {
     cidr_blocks = [var.admin_ip_cidr]
   }
 
+  # Node Exporter — port 9100
+  # For Prometheus to scrape EC2 system metrics (CPU, RAM, disk, network)
+  # Temporarily open to all IPs for testing - CHANGE THIS IN PRODUCTION
+  ingress {
+    description = "Node Exporter metrics - Prometheus scraping"
+    from_port   = 9100
+    to_port     = 9100
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Temporary - allows from anywhere
+  }
+
+  # Kube-State-Metrics — port 30001 (NodePort)
+  # For Prometheus to scrape Kubernetes object metrics
+  # Temporarily open to all IPs for testing - CHANGE THIS IN PRODUCTION
+  ingress {
+    description = "Kube-State-Metrics - Prometheus scraping"
+    from_port   = 30001
+    to_port     = 30001
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Temporary - allows from anywhere
+  }
+
   # ── Outbound Rules ─────────────────────────────────────────────────────────
   # Allow all outbound (required for: apt updates, Docker Hub pulls, MongoDB Atlas)
   egress {
